@@ -141,7 +141,7 @@ ISR(TIMER3_COMPA_vect) {
     #ifdef FP_DEBUG_ISR
     digitalWrite(FP_ISR_W_PIN, timerISRHasWork ? HIGH : LOW);
     #endif
-    if (nFinished == 4) {                               // Finished with batch (and new batch ready)
+    if (nFinished == 4) {                                   // Finished with batch (and new batch ready)
         // Copy batch data from nextXxx variables to ISR's variables; set rotation directions
         for (byte i = 0; i < 4; i++) {
             pendingSteps[i] = nextPendingSteps[i];
@@ -374,15 +374,15 @@ void calClkISR() {
     for (byte cable = 0; cable < 4; cable++) {
         if (winchDir[cable] != paused) {                        // Only update if winching
             byte reading = (calData >> (3 - cable) & 1);
-            if (reading == FP_CAL_B) {                          // Bead present in photo-interrupter
+            if (reading == FP_CAL_B) {                          // Magnet present at Hall sensor
                 if (winchDir[cable] == winchState::shortening) {
                     if (cablePos[cable] == cableState::tooLong) {
-                        cablePos[cable] = cableState::atCal;    // bead, shortening, tooLong ==> arrived at calibration point
+                        cablePos[cable] = cableState::atCal;    // magnet, shortening, tooLong ==> arrived at calibration point
                         #ifdef FP_DEBUG_CAL_ISR
                         newCablePos = true;
                         #endif
                     } else if (cablePos[cable] == cableState::atCal) {
-                        cablePos[cable] = cableState::tooShort; // bead, shortening, atCal ==> cable now too short
+                        cablePos[cable] = cableState::tooShort; // magnet, shortening, atCal ==> cable now too short
                         #ifdef FP_DEBUG_CAL_ISR
                         newCablePos = true;
                         #endif
@@ -394,19 +394,19 @@ void calClkISR() {
                         newCablePos = true;
                         #endif
                     } else if (cablePos[cable] == cableState::atCal) {
-                        cablePos[cable] = cableState::tooLong; // bead, lengthening, atCal ==> cable now too long
+                        cablePos[cable] = cableState::tooLong; // magnet, lengthening, atCal ==> cable now too long
                         #ifdef FP_DEBUG_CAL_ISR
                         newCablePos = true;
                         #endif
                     }
                 }
-            } else {                                        // No bead present
+            } else {                                        // No magnet present
                 if (cablePos[cable] == cableState::atCal || cablePos[cable] == cableState::shortish) {
                     cablePos[cable] = winchDir[cable] == winchState::shortening ? cableState::tooShort : cableState::tooLong;
-                                                            // no bead, shortish, shortening, ==> cable now too short
-                                                            // no bead, shortish, lengthening ==> cable now too long
-                                                            // no bead, at calibration point, shortening ==> cable now too short
-                                                            // no bead, at calibration point, lengthening ==> cable now too long
+                                                            // no magent, shortish, shortening, ==> cable now too short
+                                                            // no magnet, shortish, lengthening ==> cable now too long
+                                                            // no magnet, at calibration point, shortening ==> cable now too short
+                                                            // no magnet, at calibration point, lengthening ==> cable now too long
                     #ifdef FP_DEBUG_CAL_ISR
                     newCablePos = true;
                     #endif
@@ -1038,6 +1038,19 @@ void FlyingPlatform::stop() {
         doCal = false;
         calibrated = false;
     }
+}
+
+void FlyingPlatform::status() {
+    Serial.print(F(
+        "Status\n"
+        " Enabled: "));
+    Serial.print(enabled);
+    Serial.print(F(", Calibrated: "));
+    Serial.print(calibrated);
+    Serial.print(F(",  hasWork: "));
+    Serial.print(timerISRHasWork);
+    Serial.print(F(", nextReady: "));
+    Serial.println(nextReady);
 }
 
 fp_Point3D FlyingPlatform::where() {

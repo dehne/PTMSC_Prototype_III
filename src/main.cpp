@@ -1,5 +1,5 @@
 /****
- * PTMSCPrototype V0.76, February 2022
+ * PTMSCPrototype V0.77, February 2022
  * 
  * Drive the pinto abalone exhibition prototype simulating a scuba diver doing
  * abalone outplanting using a "flying camera" mechanism simiar in principle 
@@ -29,7 +29,16 @@
  * 
  * The "hard part" of driving the mechanism is in the FlyingPlatform library.
  * 
- * Copyright (C) 2020-2021 D.L. Ehnebuske
+ * In the exhibit, our Serial is connected to the media player. For debugging 
+ * purposes it echos what we send it. It also provides a means to relay 
+ * commands typed on the keyboard to us, and can issue commands to us, if need 
+ * be. Importantly, we can send it commands to cause it to play different 
+ * video clips appropriate to the state of the visitor's interaction. this is 
+ * done by sending "!play <clip_name>\n" to Serial. Here <clip_name> is 
+ * the name of the clip to be played, as defined in the media player's 
+ * mediadef.h file.
+ * 
+ * Copyright (C) 2020-2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -116,7 +125,7 @@
 #define LED_PLACE       (36)
 
 // Misc compile-time definitions
-#define BANNER          F("PTMSC Prototype v 0.76 February 2022")
+#define BANNER          F("PTMSC Prototype v 0.77 March 2022")
 
 // Global variables
 FlyingPlatform diver {
@@ -127,6 +136,7 @@ FlyingPlatform diver {
   mmToSteps(SIZE_X), mmToSteps(SIZE_Y), mmToSteps(SIZE_Z)};
 UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
+bool backing = false;   // Temp: Need a way to stop media player: joystick back, then press Down
 
 /**
  * 
@@ -193,6 +203,7 @@ void onHelp() {
     "  s                        Same as stop\n"
     "  setHome                  Assume the current position is home.\n"
     "  calibrate                Move to the sensor-defined home position.\n"
+    "  status                   Print movement status information\n"
     "  where                    Print (z, y, z) location of diver."));
 }
 
@@ -245,6 +256,11 @@ void onStop() {
   Serial.println(F("Stopping."));
 }
 
+// status
+void onStatus() {
+  diver.status();
+}
+
 // w and where
 void onWhere() {
   fp_Point3D loc = diver.where();
@@ -289,8 +305,14 @@ void onToForward() {
   #endif
 }
 
+// Temp: toBack Need a way to stop media player: joystick back, then press Down
+void onToBack() {
+  backing = true;
+}
+
 // toStop
 void onToStop() {
+  backing = false;  //Temp
   diver.stop();
   #ifdef DEBUG
   Serial.println(F("console: Stop"));
@@ -329,6 +351,11 @@ void onToRight() {
 
 // downPressed
 void onDownPressed() {
+  // Temp: Need a way to stop media player: joystick back, then press Down
+  if (backing) {
+    Serial.println(F("\n!stop")); // Issue stop command to media player
+    return;
+  }
   #ifdef DEBUG
   Serial.print(F("console: Falling. "));
   interpretRc(diver.turn(fp_falling));
@@ -360,6 +387,11 @@ void onUpPressed() {
 // placePressed
 void onPlacePressed() {
   console.setPlaceLED(true);
+  // Temp: Command to media player, just to try it out
+  if (diver.isCalibrated() && diver.isEnabled()) {
+    diver.stop();
+    Serial.println(F("\n!play miss1"));
+  }
 }
 
 // placeReleased
@@ -386,18 +418,19 @@ void setup() {
   // Attach the command handlers for the ui
   ui.attachDefaultCmdHandler(onUnknown);
   bool succeeded = 
-  ui.attachCmdHandler("enable", onEnable) &&
-  ui.attachCmdHandler("help", onHelp) &&
-  ui.attachCmdHandler("h", onHelp) &&
-  ui.attachCmdHandler("move", onMove) &&
-  ui.attachCmdHandler("m", onMove) &&
-  ui.attachCmdHandler("sethome", onSethome) &&
-  ui.attachCmdHandler("calibrate", onCalibrate) &&
-  ui.attachCmdHandler("home", onHome) &&
-  ui.attachCmdHandler("rest", onRest) &&
-  ui.attachCmdHandler("stop", onStop) &&
-  ui.attachCmdHandler("s", onStop) &&
-  ui.attachCmdHandler("where", onWhere);
+    ui.attachCmdHandler("enable", onEnable) &&
+    ui.attachCmdHandler("help", onHelp) &&
+    ui.attachCmdHandler("h", onHelp) &&
+    ui.attachCmdHandler("move", onMove) &&
+    ui.attachCmdHandler("m", onMove) &&
+    ui.attachCmdHandler("sethome", onSethome) &&
+    ui.attachCmdHandler("calibrate", onCalibrate) &&
+    ui.attachCmdHandler("home", onHome) &&
+    ui.attachCmdHandler("rest", onRest) &&
+    ui.attachCmdHandler("stop", onStop) &&
+    ui.attachCmdHandler("s", onStop) &&
+    ui.attachCmdHandler("status", onStatus) &&
+    ui.attachCmdHandler("where", onWhere);
   if (!succeeded) {
     Serial.println(F("Too many command handlers."));
   }
@@ -405,6 +438,7 @@ void setup() {
   // Initialize control pad
   console.begin();
   console.attachHandler(clEvent::evForward, onToForward);
+  console.attachHandler(clEvent::evBack, onToBack);
   console.attachHandler(clEvent::evStop, onToStop);
   console.attachHandler(clEvent::evLeft, onToLeft);
   console.attachHandler(clEvent::evNeutral, onToNeutral);

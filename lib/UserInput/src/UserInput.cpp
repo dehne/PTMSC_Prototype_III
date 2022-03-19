@@ -130,6 +130,16 @@ void UserInput::process() {
     // Dispatch the associated handler, or the default handler if 
     // there is one and no handler for the command is found
     if (ix == handlerCount) {
+        #ifdef DEBUG_USER_INPUT
+        static bool didIt = false;
+        if (!didIt) {
+            didIt = true;
+            stream->print(F("Debug cmdline length: "));
+            stream->print(commandLine.length());
+            stream->print(F(" first char 0x"));
+            stream->println(commandLine.charAt(0), HEX);
+        }
+        #endif
         if (defaultHandler != NULL) {
             (*defaultHandler)();
         }

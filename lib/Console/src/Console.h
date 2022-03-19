@@ -87,7 +87,7 @@
         public:
             /**
              * 
-             * Make a new COnsole object. 
+             * Make a new Console object. 
              * 
              * Parameters
              *  pinL    The pin to which the joystick left switch is attached
