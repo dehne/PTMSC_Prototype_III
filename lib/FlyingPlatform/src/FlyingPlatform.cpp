@@ -61,12 +61,11 @@ volatile static bool calibrated;            // True if we know where the platfor
 
 #ifdef FP_DEBUG_ISR
 volatile static bool late = false;          // Set true if didn't dispatch step on time, reset after reporting
-volatile static bool captured = false;
-volatile static byte tNFinished;
-volatile static unsigned long tCurMicros;
-volatile static unsigned long tTargetMicros0;
-volatile static unsigned long tDsInterval0;
-volatile static unsigned long tMicrosToGo;
+volatile static bool dump = false;          // Set true to have ISR fill in debugging vars (below). ISR resets when done
+volatile static bool captured = false;      // Set true by ISR when debugging vars captured reset by run() after printing dump
+volatile static byte tNFinished;            // nFinished at time of dump
+volatile static unsigned long tCurMicros;   // curMicros and targetMicros at time of dump
+volatile static unsigned long tTargetMicros[4];
 #endif
 
 // calReader ISR
@@ -123,25 +122,39 @@ ISR(TIMER3_COMPA_vect) {
     static long pendingSteps[4] = {0, 0, 0, 0};             // Number of remaining steps by which to change each cable
     static unsigned long dsInterval[4];                     // Interval between each cable's steps (μs)
     static unsigned long targetMicros[4] =  {0, 0, 0, 0};   // When to dispatch next step for each cable
+    static unsigned long lastMicros = 0;                    // At entry to interrupt: curMicros for last interrupt
+    bool microsOflow;                                       // true if micros() wrapped around since last interrupt
 
     unsigned long curMicros = micros();                     // micros() at entry to ISR
+    microsOflow = curMicros < lastMicros;                   // True if micros() overflowed since last interrupt
+    lastMicros = curMicros;
+
     #ifdef FP_DEBUG_ISR
-    digitalWrite(FP_ISR_I_PIN, HIGH);
-    #endif
-    if (nFinished == 4 && !nextReady) {                     // No work if finished with batch but no new batch ready
-        timerISRHasWork = false;
-        #ifdef FP_DEBUG_ISR
-        digitalWrite(FP_ISR_W_PIN, LOW);
-        digitalWrite(FP_ISR_I_PIN, LOW);
-        #endif
-        return;
-    } else {
-        timerISRHasWork = true;
+    digitalWrite(FP_ISR_I_PIN, HIGH);                       // Show we're in the ISR
+    if (dump && !captured) {                                // If dump requested and it's possible to do it
+        tCurMicros = curMicros;                             //  Do it
+        tNFinished = nFinished;
+        for (byte i = 0; i < 4; i++) {
+            tTargetMicros[i] = targetMicros[i];
+        }
+        dump = false;                                       // And indicate we did
+        captured = true;
     }
-    #ifdef FP_DEBUG_ISR
-    digitalWrite(FP_ISR_W_PIN, timerISRHasWork ? HIGH : LOW);
     #endif
-    if (nFinished == 4) {                                   // Finished with batch (and new batch ready)
+
+    if (nFinished == 4) {                                   // Finished with batch
+        if (!nextReady) {                                   // No work to do if no new batch ready
+            timerISRHasWork = false;
+            OCR3A = 0xFFFF;                                 // Interrupt in the longest possible interval
+            #ifdef FP_DEBUG_ISR
+            digitalWrite(FP_ISR_T_PIN, HIGH);               // Show we're in long interrupt
+            digitalWrite(FP_ISR_W_PIN, LOW);                // With no pending work
+            digitalWrite(FP_ISR_I_PIN, LOW);                // And not in the ISR
+            #endif
+            return;
+        }
+        timerISRHasWork = true;
+        digitalWrite(FP_ISR_W_PIN, HIGH);                   // Show we have work to do
         // Copy batch data from nextXxx variables to ISR's variables; set rotation directions
         for (byte i = 0; i < 4; i++) {
             pendingSteps[i] = nextPendingSteps[i];
@@ -153,28 +166,27 @@ ISR(TIMER3_COMPA_vect) {
                 winchDir[i] = winchState::lengthening;
             }
             dsInterval[i] = nextDsInterval[i];
-            if (curMicros > targetMicros[i]) {
-                targetMicros[i] = curMicros;
-            }
+            targetMicros[i] = curMicros;
         }
         nextReady = false;                  // Hand nextXxx variables back to object
     }
 
     // Process any steps that are ready. Along the way, discover micros() at 
-    // which we'll need to process the next step(s). FP_MAX_JITTER needs to be 
-    // big enough so that there is time to get through dispatching these steps 
-    // and set OCR0A and exit before shortestT passes by or we'll miss a whole 
-    // ms.
+    // which we'll need to process the next step(s). FP_MAX_ISR_TIME needs to 
+    // be big enough so that there is time to get through dispatching these 
+    // steps and set OCR0A and exit before shortestT passes by or we'll miss a 
+    // whole ms.
     nFinished = 0;
-    unsigned long shortestT = curMicros + 1000000;      // Assume time to next interrupt will be a long way off
+    unsigned long shortestT = 1000000;                  // Assume micros to next interrupt will be a long way off
     for (byte i = 0; i < 4; i++) {
-        if (pendingSteps[i] > 0 && curMicros >= targetMicros[i] - FP_MAX_ISR_TIME) {
+        if (pendingSteps[i] > 0 && 
+            ((!microsOflow && curMicros >= targetMicros[i] - FP_MAX_ISR_TIME) || (microsOflow && targetMicros[i] - FP_MAX_ISR_TIME >= curMicros))) {
             digitalWrite(stepPin[i], HIGH);             // Start step pulse
             cableSteps[i] += winchDir[i] == winchState::shortening ? -1 : 1;
             pendingSteps[i]--; 
             targetMicros[i] += dsInterval[i];           // Figure micros() at next step
             #ifdef FP_DEBUG_ISR
-            if (targetMicros[i] < curMicros) {
+            if ((!microsOflow && targetMicros[i] < curMicros) || (microsOflow && curMicros > targetMicros[i])) {
                 late = true;
             }
             #endif
@@ -183,41 +195,31 @@ ISR(TIMER3_COMPA_vect) {
         if (pendingSteps[i] == 0) {
             nFinished++;                                // Mark that we're done with stepper[i]
             winchDir[i] = winchState::paused;
-        } else if (targetMicros[i] < shortestT) {       // Otherwise see if we have a new shortest time to next interrupt
-            shortestT = targetMicros[i];
+        } else if (targetMicros[i] - curMicros < shortestT) {       // Otherwise see if we have a new shortest time to next interrupt
+            shortestT = targetMicros[i] - curMicros;
         }
     }
 
     // Assuming we're not finished with a batch or, if we are, that there's 
-    // not another batch ready to go, shortestT now holds the micros() at 
-    // which the next interrupt should occur. If on the other hand we're done 
-    // with a batch, and there's a new one ready to go, we need an interrupt 
-    // quickly get working on it. Either way, figure out what OCR3A should be 
-    // to interrupt appropriately. 
-    unsigned long microsToGo = (nFinished < 4 || !nextReady) ? (shortestT - curMicros) : FP_MAX_ISR_TIME;
-    #ifdef FP_DEBUG_ISR
-    if (!captured && microsToGo < FP_MAX_ISR_TIME) {
-        tNFinished = nFinished;
-        tCurMicros = curMicros;
-        tMicrosToGo = microsToGo;
-        tTargetMicros0 = targetMicros[0];
-        tDsInterval0 = dsInterval[0];
-        captured = true;
-    }
-    #endif
-    if (microsToGo < 262144UL) {
+    // not another batch ready to go, shortestT now holds the number of 
+    // micros() past curMicros at which the next interrupt should occur. 
+    // If on the other hand we're done with a batch, and there's a new one 
+    // ready to go, we need an interrupt quickly get working on it. Either 
+    // way, figure out what OCR3A should be to interrupt appropriately. 
+    unsigned long microsToGo = (nFinished < 4 || !nextReady) ? (shortestT) : FP_MAX_ISR_TIME;
+    if (microsToGo < 262144UL) {            // If not too long for the hardware
         OCR3A = (microsToGo >> 2) & 0xFFFF; // Interrupt in microsToGo μs
         #ifdef FP_DEBUG_ISR
-        digitalWrite(FP_ISR_T_PIN, LOW);
+        digitalWrite(FP_ISR_T_PIN, LOW);    // Show we're not in long interrupt
         #endif
     } else {
-        OCR3A = 0xFFFF;                     // Longest possible interval
+        OCR3A = 0xFFFF;                     // Interrupt in the longest possible interval
         #ifdef FP_DEBUG_ISR
-        digitalWrite(FP_ISR_T_PIN, HIGH);
+        digitalWrite(FP_ISR_T_PIN, HIGH);   // Show we're in long interrupt
         #endif
     }
     #ifdef FP_DEBUG_ISR
-    digitalWrite(FP_ISR_I_PIN, LOW);
+    digitalWrite(FP_ISR_I_PIN, LOW);        // Show we're not in the ISR
     #endif
 }
 
@@ -575,25 +577,24 @@ bool FlyingPlatform::run() {
     #endif
     #ifdef FP_DEBUG_ISR
         if (captured) {
-            unsigned long ttm, tmt, tcm, tdi;
+            unsigned long ttm[4], tcm;
             byte tnf;
             ATOMIC_BLOCK(ATOMIC_FORCEON) {
-                ttm = tTargetMicros0;
                 tnf = tNFinished;
-                tmt = tMicrosToGo;
                 tcm = tCurMicros;
-                tdi = tDsInterval0;
+                for (int8_t i = 0; i < 4; i++) {
+                    ttm[i] = tTargetMicros[i];
+                }
             }
-            Serial.print(F("ISR Captured short wait. curMicros: "));
+            Serial.print(F("ISR status dump. curMicros: "));
             Serial.print(tcm);
-            Serial.print(F(", microsToGo: "));
-            Serial.print(tmt);
             Serial.print(F(", nFinished: "));
             Serial.print(tnf);
-            Serial.print(F(", targetMicros[0]: "));
-            Serial.print(ttm);
-            Serial.print(F(", dsInterval[0]: "));
-            Serial.println(tdi);
+            Serial.print(F(", targetMicros[]: "));
+            for (int8_t i = 0; i < 4; i++) {
+                Serial.print(ttm[i]);
+                Serial.print(i == 3 ? F("\n") : F(", "));
+            }
             captured = false;
         }
         if (late) {
@@ -1051,6 +1052,9 @@ void FlyingPlatform::status() {
     Serial.print(timerISRHasWork);
     Serial.print(F(", nextReady: "));
     Serial.println(nextReady);
+    if (!captured) {
+        dump = true;
+    }
 }
 
 fp_Point3D FlyingPlatform::where() {

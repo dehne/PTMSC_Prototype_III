@@ -156,9 +156,9 @@
     #define FP_CAL_B            (1)         // calReader bitcode for magnet present
     #define FP_CAL_MORE         (100)       // Number of steps to take to eliminate backlash
     #ifdef FP_DEBUG_ISR
-    #define FP_ISR_T_PIN        (A3)        // Digital pin set on when OCR3A set to 0xFFFF, off otherwise
-    #define FP_ISR_I_PIN        (A4)        // Digital pin toggled on at start of Timer/Counter3 ISR, off at end
-    #define FP_ISR_W_PIN        (A5)        // Digital pin set on when there's work for Timer/Counter3 ISR, off when none
+    #define FP_ISR_T_PIN        (A3)        // Digital pin used for temporary debugging purposes
+    #define FP_ISR_I_PIN        (A4)        // Digital pin toggled HIGH at start of Timer/Counter3 ISR, LOW at end
+    #define FP_ISR_W_PIN        (A5)        // Digital pin set HIGH when there's work for Timer/Counter3 ISR, LOW when none
     #endif
     #define FP_DIVER_BPS        (120)       // Transmission rate to diver in bits/sec (Want to do 24 bits in ~ 0.2 sec)
     #define FP_DIVER_NOM_TRANS      ((unsigned long)(1000000 / FP_DIVER_BPS))   // Nominal number of μs before the 2nd - Nth bit in a diver transmission group
