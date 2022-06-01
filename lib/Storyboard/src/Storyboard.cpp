@@ -83,8 +83,8 @@ void Storyboard::attachActionHandler(sb_actid_t id, sb_actionhandler handler) {
     actionHandler[id] = handler;
 }
 
-void Storyboard::attachTriggerHandler(sb_stateid_t id, sb_triggerhandler_t handler) {
-   triggerHandler[id] = handler;
+void Storyboard::attachTriggerHandler(sb_trigid_t triggerId, sb_triggerhandler_t handler) {
+   triggerHandler[triggerId] = handler;
 }
 
 Storyboard::Storyboard() {

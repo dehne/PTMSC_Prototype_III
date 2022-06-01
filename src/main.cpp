@@ -142,6 +142,7 @@ UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
 Storyboard* sb = Storyboard::getInstance();
 unsigned long lastTouchMillis;                // millis at when the last console evrnt happened
+bool videoHasEnded = false;                   // From media player: The last requested video clip finished
 bool backing = false;   // Temp: Need a way to stop media player: joystick back, then press Down
 
 /**
@@ -210,7 +211,9 @@ void onHelp() {
     "  setHome                  Assume the current position is home.\n"
     "  calibrate                Move to the sensor-defined home position.\n"
     "  status                   Print movement status information\n"
-    "  where                    Print (z, y, z) location of diver."));
+    "  where                    Print (z, y, z) location of diver.\n\n"
+    "Additional 'pseudo commands' as info from the media player\n"
+    "  !vidEnd                  Indicates the requested video clip ended"));
 }
 
 // m and move <x> <y> <z>
@@ -283,6 +286,11 @@ void onWhere() {
   Serial.print(F(", "));
   Serial.print(stepsToMm(loc.z) - HOME_Z);
   Serial.println(F(") from home"));
+}
+
+// !vidEnd pseudo command -- infor from media player that the requested clip has played
+void onPseudoCommandVidEnd() {
+  videoHasEnded = true;
 }
 
 /**
@@ -420,14 +428,18 @@ void onPlaceReleased() {
  * Storyboard trigger handlers
  * 
  **/
-// asynch trigger handler
-bool onAsynchTrigger(sb_stateid_t s, sb_trigid_t t) {
+// asynchTimer trigger handler
+bool onAsynchTimerTrigger(sb_stateid_t s, sb_trigid_t t) {
  return millis() - lastTouchMillis > TIMEOUT_MS;
 }
 
 // videoEnds trigger handler
-bool onVideoEnds(sb_stateid_t s, sb_trigid_t t) {
-  return true;    // Stub
+bool onVideoEndsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  if (videoHasEnded) {
+    videoHasEnded = false;
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -461,7 +473,8 @@ void setup() {
     ui.attachCmdHandler("stop", onStop) &&
     ui.attachCmdHandler("s", onStop) &&
     ui.attachCmdHandler("status", onStatus) &&
-    ui.attachCmdHandler("where", onWhere);
+    ui.attachCmdHandler("where", onWhere) &&
+    ui.attachCmdHandler("!vidEnd", onPseudoCommandVidEnd);
   if (!succeeded) {
     Serial.println(F("Too many command handlers."));
   }
@@ -480,6 +493,9 @@ void setup() {
   console.attachHandler(clEvent::evDownPressed, onDownPressed);
   console.attachHandler(clEvent::evPlacePressed, onPlacePressed);
   console.attachHandler(clEvent::evPlaceReleased, onPlaceReleased);
+
+  sb->attachTriggerHandler(asynchTimer, onAsynchTimerTrigger);
+  sb->attachTriggerHandler(videoEnds, onVideoEndsTrigger);
 
   Serial.println(F("Type \"h\" for list of commands."));
 }

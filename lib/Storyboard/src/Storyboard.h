@@ -279,7 +279,7 @@ class Storyboard {
          *      handler     The handler function to be attached
          * 
          ****/
-        void attachTriggerHandler(sb_stateid_t triggerId, sb_triggerhandler_t handler);
+        void attachTriggerHandler(sb_trigid_t triggerId, sb_triggerhandler_t handler);
 
     private:
         /****
