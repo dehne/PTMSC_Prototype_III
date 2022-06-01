@@ -55,6 +55,7 @@
 #include "FlyingPlatform.h"
 #include "UserInput.h"
 #include "Console.h"
+#include "Storyboard.h"
 
 #define DEBUG                       // Uncomment to turn on debugging messages
 
@@ -115,6 +116,9 @@
 #define SW_PLACE        (34)
 #define LED_PLACE       (36)
 
+// Storyboard related definitions
+#define TIMEOUT_MS      (30000)       // millis() of no activity before exhibit auto-reset
+
 // Misc compile-time definitions
 #define BANNER          F("PTMSC Prototype v 0.76 February 2022")
 
@@ -127,6 +131,8 @@ FlyingPlatform diver {
   mmToSteps(SIZE_X), mmToSteps(SIZE_Y), mmToSteps(SIZE_Z)};
 UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
+Storyboard* sb = Storyboard::getInstance();
+unsigned long lastTouchMillis;                // millis at when the last console evrnt happened
 
 /**
  * 
@@ -272,6 +278,7 @@ void onWhere() {
 
 // toForward
 void onToForward() {
+  lastTouchMillis = millis();
   if (console.placeLedIsOn() && !diver.isCalibrated() && diver.isEnabled()) {
     #ifdef DEBUG
     Serial.print(F("Console: calibrate. "));
@@ -291,6 +298,7 @@ void onToForward() {
 
 // toStop
 void onToStop() {
+  lastTouchMillis = millis();
   diver.stop();
   #ifdef DEBUG
   Serial.println(F("console: Stop"));
@@ -299,6 +307,7 @@ void onToStop() {
 
 // toLeft
 void onToLeft() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print(F("console: Left. "));
   interpretRc(diver.turn(fp_left));
@@ -309,6 +318,7 @@ void onToLeft() {
 
 // toNeutral
 void onToNeutral() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print(F("console: Neutral. "));
   interpretRc(diver.turn(fp_straight));
@@ -319,6 +329,7 @@ void onToNeutral() {
 
 // toRight
 void onToRight() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print(F("console: Right. "));
   interpretRc(diver.turn(fp_right));
@@ -329,6 +340,7 @@ void onToRight() {
 
 // downPressed
 void onDownPressed() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print(F("console: Falling. "));
   interpretRc(diver.turn(fp_falling));
@@ -339,6 +351,7 @@ void onDownPressed() {
 
 // downReleased or upReleased
 void onUpOrDownReleased() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print("console: Level. ");
   interpretRc(diver.turn(fp_level));
@@ -349,6 +362,7 @@ void onUpOrDownReleased() {
 
 // upPressed
 void onUpPressed() {
+  lastTouchMillis = millis();
   #ifdef DEBUG
   Serial.print(F("console: Rising. "));
   interpretRc(diver.turn(fp_rising));
@@ -359,12 +373,29 @@ void onUpPressed() {
 
 // placePressed
 void onPlacePressed() {
+  lastTouchMillis = millis();
   console.setPlaceLED(true);
 }
 
 // placeReleased
 void onPlaceReleased() {
+  lastTouchMillis = millis();
   console.setPlaceLED(false);
+}
+
+/**
+ *
+ * Storyboard trigger handlers
+ * 
+ **/
+// asynch trigger handler
+bool onAsynchTrigger(sb_stateid_t s, sb_trigid_t t) {
+ return millis() - lastTouchMillis > TIMEOUT_MS;
+}
+
+// videoEnds trigger handler
+bool onVideoEnds(sb_stateid_t s, sb_trigid_t t) {
+  return true;    // Stub
 }
 
 /**
