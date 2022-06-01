@@ -67,6 +67,7 @@
          #include "WProgram.h"
     #endif
 
+//  #define DEBUG_USER_INPUT                // Uncomment to enable debug printing on Stream stream
     #define MAX_HANDLERS        (16)        // The maximum number of callbacks
     #define UIL_PROMPT          (F("> "))   // User prompt string
 
