@@ -1,7 +1,7 @@
 /****
  * 
  * This file is a portion of the package Storyboard, a library that provides 
- * the the state machine underlying "gameplay" for the PTMSC abalone diver 
+ * the state machine underlying "gameplay" for the PTMSC abalone diver 
  * exhibit. 
  * 
  * See Storyboard.h for details.
@@ -73,7 +73,7 @@ void Storyboard::run() {
             // Then run through the new state's actions
             for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
                 // Carry each one out in turn by invoking the corresponding action handler
-                actionHandler[sbState[currentStateId].actionId[actionIx]](currentStateId, sbState[currentStateId].actionId[actionIx], sbState[currentStateId].clipId);
+                actionHandler[sbState[currentStateId].actionId[actionIx]](currentStateId, sbState[currentStateId].actionId[actionIx], sbState[currentStateId].clipId[actionIx]);
             }
         }
     }

@@ -126,7 +126,12 @@
 #define LED_PLACE       (36)
 
 // Storyboard related definitions
-#define TIMEOUT_MS      (30000)       // millis() of no activity before exhibit auto-reset
+#define TIMEOUT_MS      (30000)                 // millis() of no activity before exhibit auto-reset
+#define NEAR_MM         (30)                    // How close the diver needs to be to be "near" a site (mm)
+#define NEAR_RULER      (3 * NEAR_MM * NEAR_MM) // To be "near" deltaX**2 + deltaY**2 + deltaZ**2 must be less than this
+#define AWAY_MM         (60)                    // How far the diver needs to be to have moved "away" from a site (mm)
+#define AWAY_RULER      (3 * AWAY_MM * AWAY_MM) // To be "away" deltaX**2 + deltaY**2 + deltaZ**2 must be more than this
+#define INIT_COHORTS    (3)                     // The number of abalone cohorts the has to outplant
 
 // Misc compile-time definitions
 #define BANNER          F("PTMSC Prototype v 0.77 March 2022")
@@ -141,8 +146,19 @@ FlyingPlatform diver {
 UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
 Storyboard* sb = Storyboard::getInstance();
-unsigned long lastTouchMillis;                // millis at when the last console evrnt happened
+sb_site_t sb_site[] = {
+    {{200, 420, 10}, false}, 
+    {{260, 270, 10}, false}, 
+    {{440, 360, 10}, false}, 
+    {{900, 480, 10}, false}, 
+    {{720, 460, 10}, false}};
+
+fp_Point3D boatLoc = {HOME_X, HOME_Y, HOME_Z};
+uint8_t nCohorts = INIT_COHORTS;              // The number of cohorts the diver is currrently carrying
+unsigned long lastTouchMillis = 0;            // millis at when the last console evrnt happened
 bool videoHasEnded = false;                   // From media player: The last requested video clip finished
+bool controlsAreEnabled = false;              // Whether the visitor can make the diver swim
+
 bool backing = false;   // Temp: Need a way to stop media player: joystick back, then press Down
 
 /**
@@ -213,7 +229,7 @@ void onHelp() {
     "  status                   Print movement status information\n"
     "  where                    Print (z, y, z) location of diver.\n\n"
     "Additional 'pseudo commands' as info from the media player\n"
-    "  !vidEnd                  Indicates the requested video clip ended"));
+    "  !videoEnd                Indicates the requested video clip ended"));
 }
 
 // m and move <x> <y> <z>
@@ -312,6 +328,9 @@ void onToForward() {
     #endif
     return;
   }
+  if (!controlsAreEnabled) {
+    return;
+  }
   #ifdef DEBUG
   Serial.print(F("console: Forward. "));
   interpretRc(diver.go());
@@ -338,6 +357,9 @@ void onToStop() {
 // toLeft
 void onToLeft() {
   lastTouchMillis = millis();
+  if (!controlsAreEnabled) {
+    return;
+  }
   #ifdef DEBUG
   Serial.print(F("console: Left. "));
   interpretRc(diver.turn(fp_left));
@@ -360,6 +382,9 @@ void onToNeutral() {
 // toRight
 void onToRight() {
   lastTouchMillis = millis();
+  if (!controlsAreEnabled) {
+    return;
+  }
   #ifdef DEBUG
   Serial.print(F("console: Right. "));
   interpretRc(diver.turn(fp_right));
@@ -374,6 +399,9 @@ void onDownPressed() {
   // Temp: Need a way to stop media player: joystick back, then press Down
   if (backing) {
     Serial.println(F("\n!stop")); // Issue stop command to media player
+    return;
+  }
+  if (!controlsAreEnabled) {
     return;
   }
   #ifdef DEBUG
@@ -398,6 +426,9 @@ void onUpOrDownReleased() {
 // upPressed
 void onUpPressed() {
   lastTouchMillis = millis();
+  if (!controlsAreEnabled) {
+    return;
+  }
   #ifdef DEBUG
   Serial.print(F("console: Rising. "));
   interpretRc(diver.turn(fp_rising));
@@ -410,11 +441,6 @@ void onUpPressed() {
 void onPlacePressed() {
   lastTouchMillis = millis();
   console.setPlaceLED(true);
-  // Temp: Command to media player, just to try it out
-  if (diver.isCalibrated() && diver.isEnabled()) {
-    diver.stop();
-    Serial.println(F("\n!play miss1"));
-  }
 }
 
 // placeReleased
@@ -428,6 +454,11 @@ void onPlaceReleased() {
  * Storyboard trigger handlers
  * 
  **/
+// always trigger handler
+bool onAlwaysTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return true;
+}
+
 // asynchTimer trigger handler
 bool onAsynchTimerTrigger(sb_stateid_t s, sb_trigid_t t) {
  return millis() - lastTouchMillis > TIMEOUT_MS;
@@ -442,7 +473,142 @@ bool onVideoEndsTrigger(sb_stateid_t s, sb_trigid_t t) {
   return false;
 }
 
+// touchJoystick trigger handler
+bool onTouchJoystickTrigger(sb_stateid_t s, sb_trigid_t t) {
+ return lastTouchMillis != 0;
+}
+
+// Convenience function for nearSitex triggers gathering the distance goop in one place
+bool isNearSite(uint8_t siteIx) {
+  fp_Point3D diverLoc = diver.where();
+  fp_Point3D delta;
+  if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > NEAR_MM) ||
+      ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > NEAR_MM) ||
+      ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > NEAR_MM) ||
+      3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
+    return false;
+  }
+  return true;
+}
+
+// nearOpenSiteCohorts<n> trigger handler for all sites
+bool onNearOpenSiteCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearOpenSiteCohorts1;
+  return isNearSite(siteIx) && !sb_site[siteIx].isFull && nCohorts > 0;
+}
+
+// nearFullSiteCohorts<n> trigger handler for all sites
+bool onNearFullSiteCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearFullSiteCohorts1;
+  return isNearSite(siteIx) && sb_site[siteIx].isFull && nCohorts > 0;
+}
+
+// nearSiteNoCohorts<n> trigger handler for all sites
+bool onNearSiteNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearSiteNoCohorts1;
+  return isNearSite(siteIx) && nCohorts == 0;
+}
+
+// awayFromSite<n> trigger handler for all sites
+bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
+  fp_Point3D diverLoc = diver.where();
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearSiteNoCohorts1;
+  fp_Point3D delta;
+  if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > AWAY_MM) ||
+      ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > AWAY_MM) ||
+      ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > AWAY_MM) ||
+      3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > AWAY_RULER) {
+        return  true;
+  }
+  return false;
+}
+
+// videoEndsCohorts trigger handler
+bool onVideoEndsCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  if (videoHasEnded && nCohorts > 0) {
+    videoHasEnded = false;
+    return true;
+  }
+  return false;
+}
+
+// videoEndsNoCohorts trigger handler
+bool onvideoEndsNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  if (videoHasEnded && nCohorts == 0) {
+    videoHasEnded = false;
+    return true;
+  }
+  return false;
+}
+
+// Convenience function for near boat trigger handlers
+bool isNearBoat() {
+  fp_Point3D diverLoc = diver.where();
+  fp_Point3D delta;
+  if (((delta.x = abs(boatLoc.x - diverLoc.x)) > NEAR_MM) ||
+      ((delta.y = abs(boatLoc.y - diverLoc.y)) > NEAR_MM) ||
+      ((delta.z = abs(boatLoc.z - diverLoc.z)) > NEAR_MM) ||
+      3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
+    return false;
+  }
+  return true;
+}
+
+// nearBoatCohorts trigger handler
+bool onNearBoatCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return isNearBoat() && nCohorts > 0;
+}
+
+// nearBoatNoCohorts trigger handler
+bool onNearBoatNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return isNearBoat() && nCohorts == 0;
+}
+
+// pressPlaceButton trigger handler
+bool onPressPlaceButtonTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return console.placeLedIsOn();
+}
+
 /**
+ * 
+ * Storyboard action handlers
+ * 
+ */
+// setLoop action handler
+void onSetLoopAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  Serial.print(F("!setLoop "));
+  Serial.println(clipId);
+}
+
+// playClip action handler
+void onPlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  Serial.print(F("!playClip "));
+  Serial.println(clipId);
+}
+
+// prepaerNew action handler
+void onPrepareNewAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  controlsAreEnabled = true;
+}
+
+// disableControls action handler
+void onDisableControlsAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  controlsAreEnabled = false;
+}
+
+// deposit<n> action handler for all sites
+void onDepositAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  uint8_t siteIx = (uint8_t)stateId - deposit1;
+  sb_site[siteIx].isFull = true;
+  nCohorts--;
+}
+
+// doSurvivalSequence 
+void onDoSurvivalSequence(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  Serial.println(F("Stub: doSurvivalSequence."));
+}
+
+/** 
  * 
  * Arduino setup() function. Called once at initialization
  * 
@@ -474,7 +640,7 @@ void setup() {
     ui.attachCmdHandler("s", onStop) &&
     ui.attachCmdHandler("status", onStatus) &&
     ui.attachCmdHandler("where", onWhere) &&
-    ui.attachCmdHandler("!vidEnd", onPseudoCommandVidEnd);
+    ui.attachCmdHandler("!videoEnds", onPseudoCommandVidEnd);
   if (!succeeded) {
     Serial.println(F("Too many command handlers."));
   }
@@ -494,8 +660,46 @@ void setup() {
   console.attachHandler(clEvent::evPlacePressed, onPlacePressed);
   console.attachHandler(clEvent::evPlaceReleased, onPlaceReleased);
 
+  // Initialize the Storyboard trigger handlers
   sb->attachTriggerHandler(asynchTimer, onAsynchTimerTrigger);
   sb->attachTriggerHandler(videoEnds, onVideoEndsTrigger);
+  sb->attachTriggerHandler(touchJoystick, onTouchJoystickTrigger);
+  sb->attachTriggerHandler(nearOpenSiteCohorts1, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSiteCohorts2, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSiteCohorts3, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSiteCohorts4, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSiteCohorts5, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSiteCohorts1, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSiteCohorts2, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSiteCohorts3, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSiteCohorts4, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSiteCohorts5, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearSiteNoCohorts1, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSiteNoCohorts2, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSiteNoCohorts3, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSiteNoCohorts4, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSiteNoCohorts5, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(awayFromSite1, onAwayFromSiteTrigger);
+  sb->attachTriggerHandler(awayFromSite2, onAwayFromSiteTrigger);
+  sb->attachTriggerHandler(awayFromSite3, onAwayFromSiteTrigger);
+  sb->attachTriggerHandler(awayFromSite4, onAwayFromSiteTrigger);
+  sb->attachTriggerHandler(awayFromSite5, onAwayFromSiteTrigger);
+  sb->attachTriggerHandler(videoEndsCohorts, onVideoEndsCohortsTrigger);
+  sb->attachTriggerHandler(videoEndsNoCohorts, onvideoEndsNoCohortsTrigger);
+  sb->attachTriggerHandler(nearBoatCohorts, onNearBoatCohortsTrigger);
+  sb->attachTriggerHandler(nearBoatNoCohorts, onNearBoatNoCohortsTrigger);
+  sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
+
+  // Initialize the Storyboard action handlers
+  sb->attachActionHandler(setLoop, onSetLoopAction);
+  sb->attachActionHandler(playClip, onPlayClipAction);
+  sb->attachActionHandler(prepareNew, onPrepareNewAction);
+  sb->attachActionHandler(disableControls, onDisableControlsAction);
+  sb->attachActionHandler(deposit1, onDepositAction);
+  sb->attachActionHandler(deposit2, onDepositAction);
+  sb->attachActionHandler(deposit3, onDepositAction);
+  sb->attachActionHandler(deposit4, onDepositAction);
+  sb->attachActionHandler(deposit5, onDepositAction);
 
   Serial.println(F("Type \"h\" for list of commands."));
 }
