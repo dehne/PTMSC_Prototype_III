@@ -80,10 +80,16 @@
 #define PIN_EN        (13)          // Enable pin - common to all motor drivers (active LOW)
 #define MAX_SPEED     (800)         // In steps per second
 
+// For communicating with the calReader and diver Arduino Nanos
 #define CAL_CLK_PIN   (2)           // The pin from which the calReader clock signal comes
 #define CAL_DATA_PIN  (3)           // The pin from which the calReader data signal comes
 #define DVR_CLK_PIN   (39)          // Pin to which the diver's clock signal goes
 #define DVR_DATA_PIN  (38)          // Pin to which the diver's data goes
+
+// For the cohort count LEDs
+#define COHORT1_PIN   (23)          // Pin to which LED indicating 1 cohort remaining is attached
+#define COHORT2_PIN   (25)          // Pin to which LED indicating 2 cohorts remaining is attached
+#define COHORT3_PIN   (27)          // Pin to which LED indicating 3 cohorts remaining is attached
 
 // Physical size of flying space (mm) measured from floor and between hoist points
 #define SIZE_X        (945)
@@ -186,6 +192,19 @@ void interpretRc(int8_t rc) {
     case fp_nom:
       Serial.println(F("Can't do this unless moving."));
   }
+}
+
+/**
+ * 
+ * Set nCohorts. Set the value and deal with the UI
+ * 
+ */
+void setNCohorts(uint8_t n) {
+  n = constrain(n, 0, INIT_COHORTS);
+  digitalWrite(COHORT1_PIN, n >= 1 ? HIGH : LOW);
+  digitalWrite(COHORT2_PIN, n >= 2 ? HIGH : LOW);
+  digitalWrite(COHORT3_PIN, n >= 3 ? HIGH : LOW);
+  nCohorts = n;
 }
 
 /**
@@ -588,6 +607,8 @@ void onPlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t cli
 
 // prepaerNew action handler
 void onPrepareNewAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  onHome();
+  setNCohorts(INIT_COHORTS);
   controlsAreEnabled = true;
 }
 
@@ -616,6 +637,14 @@ void onDoSurvivalSequence(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t
 void setup() {
   Serial.begin(9600);
   Serial.println(BANNER);
+
+  // Initialize the cohort UI LEDs
+  pinMode(COHORT1_PIN, OUTPUT);
+  digitalWrite(COHORT1_PIN, LOW);
+  pinMode(COHORT2_PIN, OUTPUT);
+  digitalWrite(COHORT2_PIN, LOW);
+  pinMode(COHORT3_PIN, OUTPUT);
+  digitalWrite(COHORT3_PIN, LOW);
 
   diver.begin();
   diver.setMaxSpeed(MAX_SPEED);
