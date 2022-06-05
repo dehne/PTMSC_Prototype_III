@@ -621,7 +621,7 @@ void onDisableControlsAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipi
 void onDepositAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
   uint8_t siteIx = (uint8_t)stateId - deposit1;
   sb_site[siteIx].isFull = true;
-  nCohorts--;
+  setNCohorts(nCohorts - 1);
 }
 
 // doSurvivalSequence 
