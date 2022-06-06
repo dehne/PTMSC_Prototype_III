@@ -46,7 +46,8 @@
 #include "FlyingPlatform.h"
 #include "Storyboardtypes.h"
 
-#define _SB_DEBUG               //Uncomment to enable debug printing
+#define _SB_DEBUG                                           // Uncomment to enable debug printing
+#define SB_SCAN_MILLIS  (300)                               // millis() between scanning for triggers
 
 
 struct sb_site_t {                                          // A description of a outplacement site
@@ -276,4 +277,5 @@ class Storyboard {
         sb_stateid_t currentStateId = resting;              // The current state of the storyboard state machine
         sb_actionhandler actionHandler[SB_N_ACTS];          // The registry of action handler functions
         sb_triggerhandler_t triggerHandler[SB_N_TRIGS];     // The registry of trigger sensor functions
+        unsigned long lastScanMillis;                       // millis() at the point we last scanned for triggers having occurred
 };

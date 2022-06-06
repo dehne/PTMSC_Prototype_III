@@ -64,6 +64,10 @@ Storyboard *Storyboard::getInstance() {
 }
 
 void Storyboard::run() {
+    // We only look for state transitions every SB_SCAN_MILLIS millis()
+    if (millis() - lastScanMillis < SB_SCAN_MILLIS) {
+        return;
+    }
     // Run through the triggers for the current state
     for (uint8_t triggerIx = 0; triggerIx < SB_MAX_TRIGS && sbState[currentStateId].trigId[triggerIx] != 0; triggerIx++) {
         // If the trigger handler for triggerIx reports the trigger has occurred
@@ -77,6 +81,7 @@ void Storyboard::run() {
             }
         }
     }
+    lastScanMillis = millis();
 }
 
 void Storyboard::attachActionHandler(sb_actid_t id, sb_actionhandler handler) {
@@ -94,4 +99,5 @@ Storyboard::Storyboard() {
         for (uint8_t ix = 0; ix < SB_N_TRIGS; ix++) {
             triggerHandler[ix] = _sb_defaultTriggerHandler;
         }
+        lastScanMillis = millis();
     }
