@@ -91,6 +91,11 @@
 #define COHORT2_PIN   (25)          // Pin to which LED indicating 2 cohorts remaining is attached
 #define COHORT3_PIN   (27)          // Pin to which LED indicating 3 cohorts remaining is attached
 
+// Debugging LED
+#ifdef DEBUG
+#define DEBUG_LED     (A3)          // We have a yellow LED attached to this pin for debugging
+#endif
+
 // Physical size of flying space (mm) measured from floor and between hoist points
 #define SIZE_X        (945)
 #define SIZE_Y        (550)
@@ -366,7 +371,7 @@ void onToBack() {
 // toStop
 void onToStop() {
   lastTouchMillis = millis();
-  backing = false;  //Temp
+  backing = false;  //Temp -- see onToBack()
   diver.stop();
   #ifdef DEBUG
   Serial.println(F("console: Stop"));
@@ -494,7 +499,10 @@ bool onVideoEndsTrigger(sb_stateid_t s, sb_trigid_t t) {
 
 // touchJoystick trigger handler
 bool onTouchJoystickTrigger(sb_stateid_t s, sb_trigid_t t) {
- return lastTouchMillis != 0;
+  #ifdef DEBUG
+  digitalWrite(DEBUG_LED, digitalRead(DEBUG_LED) == LOW ? HIGH : LOW);
+  #endif
+  return lastTouchMillis != 0;
 }
 
 // Convenience function for nearSitex triggers gathering the distance goop in one place
@@ -610,6 +618,7 @@ void onPrepareNewAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t c
   onHome();
   setNCohorts(INIT_COHORTS);
   controlsAreEnabled = true;
+  lastTouchMillis = 0;
 }
 
 // disableControls action handler
@@ -637,6 +646,11 @@ void onDoSurvivalSequence(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t
 void setup() {
   Serial.begin(9600);
   Serial.println(BANNER);
+
+  #ifdef DEBUG
+  pinMode(DEBUG_LED, OUTPUT);
+  digitalWrite(DEBUG_LED, LOW);
+  #endif
 
   // Initialize the cohort UI LEDs
   pinMode(COHORT1_PIN, OUTPUT);

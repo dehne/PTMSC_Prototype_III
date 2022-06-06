@@ -79,6 +79,9 @@ void Storyboard::run() {
                 // Carry each one out in turn by invoking the corresponding action handler
                 actionHandler[sbState[currentStateId].actionId[actionIx]](currentStateId, sbState[currentStateId].actionId[actionIx], sbState[currentStateId].clipId[actionIx]);
             }
+            // And we're done with this scan
+            lastScanMillis = millis();
+            return;
         }
     }
     lastScanMillis = millis();
