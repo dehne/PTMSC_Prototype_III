@@ -88,6 +88,11 @@ const sb_state_t sbState[] = {
         {always},                                           //   Trigger(s)
         {abandoned}},                                       //   Next state(s)
         
+    {powerUp,                                               // State
+        {nullAction}, {noClip},                             //   Action(s) Clip(s)
+        {always},                                           //   Trigger(s)
+        {resting}},                                         //   Next state(s)
+        
     {abandoned,                                             // State
         {playClip, setLoop}, {abandonedClip, restingLoop},  //   Action(s) Clip(s)
         {videoEnds},                                        //   Trigger(s)
@@ -274,7 +279,7 @@ class Storyboard {
          ****/
         Storyboard();
 
-        sb_stateid_t currentStateId = resting;              // The current state of the storyboard state machine
+        sb_stateid_t currentStateId = powerUp;              // The current state of the storyboard state machine
         sb_actionhandler actionHandler[SB_N_ACTS];          // The registry of action handler functions
         sb_triggerhandler_t triggerHandler[SB_N_TRIGS];     // The registry of trigger sensor functions
         unsigned long lastScanMillis;                       // millis() at the point we last scanned for triggers having occurred

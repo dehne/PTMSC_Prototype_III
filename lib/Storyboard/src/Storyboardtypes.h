@@ -31,7 +31,7 @@
  * 
  ****/
 // The storyboard state values and SB_N_STATES, the number of states in the storyboard
-enum sb_stateid_t : uint8_t {diving, resting, timerPop, abandoned, 
+enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned, 
                             arriveFullSite1, arriveFullSite2, arriveFullSite3, arriveFullSite4, arriveFullSite5,
                             arriveOpenSite1, arriveOpenSite2, arriveOpenSite3, arriveOpenSite4, arriveOpenSite5,
                             fillSite1,       fillSite2,       fillSite3,       fillSite4,       fillSite5,
