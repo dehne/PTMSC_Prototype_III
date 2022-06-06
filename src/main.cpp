@@ -93,20 +93,21 @@
 
 // Debugging LED
 #ifdef DEBUG
-#define DEBUG_LED     (A3)          // We have a yellow LED attached to this pin for debugging
+#define DEBUG_LED     (A5)          // We have a green LED attached to this pin for debugging
 #endif
 
 // Physical size of flying space (mm) measured from floor and between hoist points
 #define SIZE_X        (945)
 #define SIZE_Y        (550)
 #define SIZE_Z        (777)
+#define DIVER_HANG    (330)           // How much (mm) the diver hangs below the suspension point
 
 // Safety margins (mm) for left, right, front, back, down and up
 #define MARGIN_L      (30)
 #define MARGIN_R      (30)
 #define MARGIN_F      (25)
 #define MARGIN_B      (25)
-#define MARGIN_D      (310)           // Big 'cause the diver hangs down from the suspension point
+#define MARGIN_D      (DIVER_HANG + 5)// Big 'cause the diver hangs down from the suspension point
 #define MARGIN_U      (80)            // The cables get pretty tight around this height
 
 // Home location (mm)
@@ -137,7 +138,7 @@
 #define LED_PLACE       (36)
 
 // Storyboard related definitions
-#define TIMEOUT_MS      (30000)                 // millis() of no activity before exhibit auto-reset
+#define TIMEOUT_MS      (60000UL)               // millis() of no activity before exhibit auto-reset
 #define NEAR_MM         (30)                    // How close the diver needs to be to be "near" a site (mm)
 #define NEAR_RULER      (3 * NEAR_MM * NEAR_MM) // To be "near" deltaX**2 + deltaY**2 + deltaZ**2 must be less than this
 #define AWAY_MM         (60)                    // How far the diver needs to be to have moved "away" from a site (mm)
@@ -508,6 +509,7 @@ bool onTouchJoystickTrigger(sb_stateid_t s, sb_trigid_t t) {
 // Convenience function for nearSitex triggers gathering the distance goop in one place
 bool isNearSite(uint8_t siteIx) {
   fp_Point3D diverLoc = diver.where();
+  diverLoc.z -= DIVER_HANG;
   fp_Point3D delta;
   if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > NEAR_MM) ||
       ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > NEAR_MM) ||
@@ -756,4 +758,5 @@ void loop() {
   diver.run();    // Let the diver do its thing
   ui.run();       // Let the UI do its thing
   console.run();  // Let the console do its
+  sb->run();      // Let the storyboard do its thing
 }

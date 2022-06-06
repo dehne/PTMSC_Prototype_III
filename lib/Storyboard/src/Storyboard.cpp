@@ -73,7 +73,15 @@ void Storyboard::run() {
         // If the trigger handler for triggerIx reports the trigger has occurred
         if (triggerHandler[sbState[currentStateId].trigId[triggerIx]](currentStateId, sbState[currentStateId].trigId[triggerIx])) {
             // Change state to the next state for that trigger
+            #ifdef _SB_DEBUG
+            Serial.print(F("Changing storyboard state from "));
+            Serial.print(currentStateId);
+            Serial.print(F(" to "));
+            #endif
             currentStateId = sbState[currentStateId].nextStateId[triggerIx];
+            #ifdef _SB_DEBUG
+            Serial.println(currentStateId);
+            #endif
             // Then run through the new state's actions
             for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
                 // Carry each one out in turn by invoking the corresponding action handler
