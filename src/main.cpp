@@ -598,6 +598,11 @@ bool onPressPlaceButtonTrigger(sb_stateid_t s, sb_trigid_t t) {
   return console.placeLedIsOn();
 }
 
+// calibrated trigger handler
+bool onCalibratedTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return diver.isCalibrated();
+}
+
 /**
  * 
  * Storyboard action handlers
@@ -615,7 +620,7 @@ void onPlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t cli
   Serial.println(clipId);
 }
 
-// prepaerNew action handler
+// prepareNew action handler
 void onPrepareNewAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
   onHome();
   setNCohorts(INIT_COHORTS);
@@ -706,6 +711,7 @@ void setup() {
   console.attachHandler(clEvent::evPlaceReleased, onPlaceReleased);
 
   // Initialize the Storyboard trigger handlers
+  sb->attachTriggerHandler(always, onAlwaysTrigger);
   sb->attachTriggerHandler(asynchTimer, onAsynchTimerTrigger);
   sb->attachTriggerHandler(videoEnds, onVideoEndsTrigger);
   sb->attachTriggerHandler(touchJoystick, onTouchJoystickTrigger);
@@ -734,6 +740,7 @@ void setup() {
   sb->attachTriggerHandler(nearBoatCohorts, onNearBoatCohortsTrigger);
   sb->attachTriggerHandler(nearBoatNoCohorts, onNearBoatNoCohortsTrigger);
   sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
+  sb->attachTriggerHandler(calibrated, onCalibratedTrigger);
 
   // Initialize the Storyboard action handlers
   sb->attachActionHandler(setLoop, onSetLoopAction);
@@ -745,6 +752,8 @@ void setup() {
   sb->attachActionHandler(deposit3, onDepositAction);
   sb->attachActionHandler(deposit4, onDepositAction);
   sb->attachActionHandler(deposit5, onDepositAction);
+
+  sb->begin();  //Start the state machine running
 
   Serial.println(F("Type \"h\" for list of commands."));
 }

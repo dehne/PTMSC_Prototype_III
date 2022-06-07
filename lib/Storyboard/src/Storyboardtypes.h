@@ -31,7 +31,7 @@
  * 
  ****/
 // The storyboard state values and SB_N_STATES, the number of states in the storyboard
-enum sb_stateid_t : uint8_t {diving, resting, timerPop, abandoned, 
+enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned, 
                             arriveFullSite1, arriveFullSite2, arriveFullSite3, arriveFullSite4, arriveFullSite5,
                             arriveOpenSite1, arriveOpenSite2, arriveOpenSite3, arriveOpenSite4, arriveOpenSite5,
                             fillSite1,       fillSite2,       fillSite3,       fillSite4,       fillSite5,
@@ -45,7 +45,7 @@ enum sb_trigid_t : uint8_t {nullTrigger, always, asynchTimer, videoEnds, touchJo
                             nearSiteNoCohorts1,   nearSiteNoCohorts2,   nearSiteNoCohorts3,   nearSiteNoCohorts4,   nearSiteNoCohorts5,
                             awayFromSite1,        awayFromSite2,        awayFromSite3,        awayFromSite4,        awayFromSite5,
                             videoEndsCohorts, videoEndsNoCohorts, nearBoatCohorts, nearBoatNoCohorts, pressPlaceButton, 
-                            sequenceFinished, SB_N_TRIGS};
+                            sequenceFinished, calibrated, SB_N_TRIGS};
 
 // The storyboard action values
 enum sb_actid_t : uint8_t  {nullAction, setLoop, playClip, prepareNew, disableControls, 
@@ -58,4 +58,4 @@ enum sb_clipid_t : uint8_t {noClip, divingLoop, restingLoop, abandonedClip,
                             siteNoCohortsClip1, siteNoCohortsClip2, siteNoCohortsClip3, siteNoCohortsClip4, siteNoCohortsClip5,
                             openSiteLoop1,      openSiteLoop2,      openSiteLoop3,      openSiteLoop4,      openSiteLoop5,
                             fillSiteClip1,      fillSiteClip2,      fillSiteClip3,      fillSiteClip4,      fillSiteClip5,
-                            boatCohortsClip, outplantedClip, transitionClip, SB_N_CLIPS};
+                            boatCohortsClip, outplantedClip, transitionClip, calibrateLoop, SB_N_CLIPS};

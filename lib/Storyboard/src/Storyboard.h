@@ -88,6 +88,11 @@ const sb_state_t sbState[] = {
         {always},                                           //   Trigger(s)
         {abandoned}},                                       //   Next state(s)
         
+    {powerUp,                                               // State
+        {setLoop}, {calibrateLoop},                         //   Action(s) Clip(s)
+        {calibrated},                                       //   Trigger(s)
+        {resting}},                                         //   Next state(s)
+        
     {abandoned,                                             // State
         {playClip, setLoop}, {abandonedClip, restingLoop},  //   Action(s) Clip(s)
         {videoEnds},                                        //   Trigger(s)
@@ -213,6 +218,7 @@ const sb_state_t sbState[] = {
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {diving, abandoned}}                                //   Next state(s)
 };
+const sb_stateid_t initialStateId = powerUp;                // The initial state of the machine
 
 // The type of action handler invoked to carry out a specific action. The meaning of id is handler dependent
 typedef void(*sb_actionhandler)(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId);
@@ -229,6 +235,15 @@ class Storyboard {
          * 
          ****/
         static Storyboard* getInstance();
+
+        /****
+         * 
+         * begin()
+         *      Start the state machine running from state initialStateId. Set up the
+         *      trigger and action handlers before invoking.
+         * 
+         ****/
+        void begin();
 
         /****
          * 
@@ -274,7 +289,7 @@ class Storyboard {
          ****/
         Storyboard();
 
-        sb_stateid_t currentStateId = resting;              // The current state of the storyboard state machine
+        sb_stateid_t currentStateId = powerUp;              // The current state of the storyboard state machine
         sb_actionhandler actionHandler[SB_N_ACTS];          // The registry of action handler functions
         sb_triggerhandler_t triggerHandler[SB_N_TRIGS];     // The registry of trigger sensor functions
         unsigned long lastScanMillis;                       // millis() at the point we last scanned for triggers having occurred

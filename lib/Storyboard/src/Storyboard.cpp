@@ -63,6 +63,15 @@ Storyboard *Storyboard::getInstance() {
     return theInstance;
 }
 
+void Storyboard::begin() {
+    currentStateId = initialStateId;
+    // Run through the new state's actions
+    for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
+        // Carry each one out in turn by invoking the corresponding action handler
+        actionHandler[sbState[currentStateId].actionId[actionIx]](currentStateId, sbState[currentStateId].actionId[actionIx], sbState[currentStateId].clipId[actionIx]);
+    }
+}
+
 void Storyboard::run() {
     // We only look for state transitions every SB_SCAN_MILLIS millis()
     if (millis() - lastScanMillis < SB_SCAN_MILLIS) {
