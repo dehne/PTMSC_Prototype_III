@@ -93,20 +93,21 @@
 
 // Debugging LED
 #ifdef DEBUG
-#define DEBUG_LED     (A3)          // We have a yellow LED attached to this pin for debugging
+#define DEBUG_LED     (A5)          // We have a green LED attached to this pin for debugging
 #endif
 
 // Physical size of flying space (mm) measured from floor and between hoist points
 #define SIZE_X        (945)
 #define SIZE_Y        (550)
 #define SIZE_Z        (777)
+#define DIVER_HANG    (330)         // How far below the suspension point the diver hangs (mm)
 
 // Safety margins (mm) for left, right, front, back, down and up
 #define MARGIN_L      (30)
 #define MARGIN_R      (30)
 #define MARGIN_F      (25)
 #define MARGIN_B      (25)
-#define MARGIN_D      (310)           // Big 'cause the diver hangs down from the suspension point
+#define MARGIN_D      (DIVER_HANG + 5)// Big 'cause the diver hangs down from the suspension point
 #define MARGIN_U      (80)            // The cables get pretty tight around this height
 
 // Home location (mm)
@@ -507,7 +508,8 @@ bool onTouchJoystickTrigger(sb_stateid_t s, sb_trigid_t t) {
 
 // Convenience function for nearSitex triggers gathering the distance goop in one place
 bool isNearSite(uint8_t siteIx) {
-  fp_Point3D diverLoc = diver.where();
+  fp_Point3D diverLoc = diver.where();  // Get the suspension point coordinates
+  diverLoc.z -= DIVER_HANG;             // Convert to locaton of diver hangng below
   fp_Point3D delta;
   if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > NEAR_MM) ||
       ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > NEAR_MM) ||
