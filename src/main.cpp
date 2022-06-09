@@ -508,13 +508,33 @@ bool onTouchJoystickTrigger(sb_stateid_t s, sb_trigid_t t) {
 
 // Convenience function for nearSitex triggers gathering the distance goop in one place
 bool isNearSite(uint8_t siteIx) {
+  #ifdef DEBUG
+  static bool dumpIt = true;;
+  #endif
   fp_Point3D diverLoc = diver.where();
   diverLoc.z -= DIVER_HANG;
   fp_Point3D delta;
   if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > NEAR_MM) ||
       ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > NEAR_MM) ||
       ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > NEAR_MM) ||
-      3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
+      (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
+    #ifdef DEBUG
+    if (dumpIt && diverLoc.x < 200) {
+      dumpIt = false;
+      Serial.print (F("isNerSite. diverLoc: "));
+      Serial.print (diverLoc.x);
+      Serial.print(F(", "));
+      Serial.print(diverLoc.y);
+      Serial.print(F(", "));
+      Serial.print(diverLoc.z);
+      Serial.print(F("; delta: "));
+      Serial.print (delta.x);
+      Serial.print(F(", "));
+      Serial.print(delta.y);
+      Serial.print(F(", "));
+      Serial.println(delta.z);
+    }
+    #endif
     return false;
   }
   return true;
