@@ -519,9 +519,9 @@ bool isNearSite(uint8_t siteIx) {
       ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > NEAR_MM) ||
       (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
     #ifdef DEBUG
-    if (dumpIt && diverLoc.x < 200) {
+    if (dumpIt) {
       dumpIt = false;
-      Serial.print (F("isNerSite. diverLoc: "));
+      Serial.print (F("isNearSite. diverLoc: "));
       Serial.print (diverLoc.x);
       Serial.print(F(", "));
       Serial.print(diverLoc.y);
