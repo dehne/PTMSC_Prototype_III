@@ -512,14 +512,16 @@ bool isNearSite(uint8_t siteIx) {
   static bool dumpIt = true;;
   #endif
   fp_Point3D diverLoc = diver.where();
-  diverLoc.z -= DIVER_HANG;
+  diverLoc.x = stepsToMm(diverLoc.x);
+  diverLoc.y = stepsToMm(diverLoc.y);
+  diverLoc.z = stepsToMm(diverLoc.z) - DIVER_HANG;
   fp_Point3D delta;
   if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > NEAR_MM) ||
       ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > NEAR_MM) ||
       ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > NEAR_MM) ||
       (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > NEAR_RULER) {
     #ifdef DEBUG
-    if (dumpIt) {
+    if (dumpIt && diverLoc.x < 200) {
       dumpIt = false;
       Serial.print (F("isNearSite. diverLoc: "));
       Serial.print (diverLoc.x);
