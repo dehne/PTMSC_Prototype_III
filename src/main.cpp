@@ -555,12 +555,12 @@ bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
         #ifdef DEBUG
         Serial.print(F("onAwayFromSiteTrigger() siteIx: "));
         Serial.print(siteIx);
-        Serial.print(F(", delta: "));
-        Serial.print(delta.x);
+        Serial.print(F(", diverLoc: "));
+        Serial.print(diverLoc.x);
         Serial.print(F(" "));
-        Serial.print(delta.y);
+        Serial.print(diverLoc.y);
         Serial.print(F(" "));
-        Serial.println(delta.z);
+        Serial.println(diverLoc.z);
         #endif
         return  true;
   }
