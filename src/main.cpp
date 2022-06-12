@@ -560,7 +560,13 @@ bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
         Serial.print(F(" "));
         Serial.print(diverLoc.y);
         Serial.print(F(" "));
-        Serial.println(diverLoc.z);
+        Serial.print(diverLoc.z);
+        Serial.print(F(", sb_site[siteIx]: "));
+        Serial.print(sb_site[siteIx].loc.x);
+        Serial.print(F(" "));
+        Serial.print(sb_site[siteIx].loc.y);
+        Serial.print(F(" "));
+        Serial.print(sb_site[siteIx].loc.z);
         #endif
         return  true;
   }
