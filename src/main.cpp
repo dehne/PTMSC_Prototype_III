@@ -547,14 +547,17 @@ bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
   diverLoc.y = stepsToMm(diverLoc.y);
   diverLoc.z = stepsToMm(diverLoc.z) - DIVER_HANG;
   uint16_t siteIx = (uint8_t)t - (uint8_t)awayFromSite1;
-  fp_Point3D delta;
-  if (((delta.x = abs(sb_site[siteIx].loc.x - diverLoc.x)) > AWAY_MM) ||
-      ((delta.y = abs(sb_site[siteIx].loc.y - diverLoc.y)) > AWAY_MM) ||
-      ((delta.z = abs(sb_site[siteIx].loc.z - diverLoc.z)) > AWAY_MM) ||
-      3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > AWAY_RULER) {
+  fp_Point3D delta = {abs(sb_site[siteIx].loc.x - diverLoc.x), abs(sb_site[siteIx].loc.y - diverLoc.y), abs(sb_site[siteIx].loc.z - diverLoc.z)};
+  if (delta.x > AWAY_MM || delta.y > AWAY_MM || delta.z > AWAY_MM || 3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > AWAY_RULER) {
         #ifdef DEBUG
         Serial.print(F("onAwayFromSiteTrigger() siteIx: "));
         Serial.print(siteIx);
+        Serial.print(F(", delta: "));
+        Serial.print(delta.x);
+        Serial.print(F(" "));
+        Serial.print(delta.y);
+        Serial.print(F(" "));
+        Serial.print(delta.z);
         Serial.print(F(", diverLoc: "));
         Serial.print(diverLoc.x);
         Serial.print(F(" "));
