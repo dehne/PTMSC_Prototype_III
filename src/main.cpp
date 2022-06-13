@@ -657,9 +657,12 @@ void onPlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t cli
 
 // prepareNew action handler
 void onPrepareNewAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
-  onHome();
-  setNCohorts(INIT_COHORTS);
-  controlsAreEnabled = true;
+  onHome();                                     // Back to the boat
+  setNCohorts(INIT_COHORTS);                    // Get stuff to outplant
+  for (uint8_t siteIx = 0; siteIx < SB_SITE_COUNT; siteIx++) {
+    sb_site[siteIx].isFull = false;             // Empty the sites of putplants
+  }
+  controlsAreEnabled = true;                    // Let it rip!
   lastTouchMillis = 0;
 }
 
@@ -670,8 +673,8 @@ void onDisableControlsAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipi
 
 // deposit<n> action handler for all sites
 void onDepositAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
-  uint8_t siteIx = (uint8_t)stateId - deposit1;
-  sb_site[siteIx].isFull = true;
+  uint8_t siteIx = (uint8_t)stateId - deposit1; // Determint which site we're depositing in
+  sb_site[siteIx].isFull = true;                // Make the deposit
   setNCohorts(nCohorts - 1);
 }
 
