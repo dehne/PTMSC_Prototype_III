@@ -164,6 +164,7 @@ sb_site_t sb_site[] = {
     {{440, 360, 10}, false}, 
     {{900, 480, 10}, false}, 
     {{720, 460, 10}, false}};
+#define SITE_COUNT      ((int)(sizeof(sb_site) / sizeof(sb_site[0])))  // Number of sites
 
 fp_Point3D boatLoc = {HOME_X, HOME_Y, HOME_Z};
 uint8_t nCohorts = INIT_COHORTS;              // The number of cohorts the diver is currrently carrying
@@ -247,6 +248,7 @@ void onHelp() {
     "  rest                     Move to the resting position (e.g., before shutdown)\n"
     "  move <mmX> <mmY> <mmZ>   Move by the amounts specified\n"
     "  m <mmX> <mmY> <mmZ>      Same as move.\n"
+    "  toSite <n>               Move to outplacement site <n>\n"
     "  stop                     Stop all motion.\n"
     "  s                        Same as stop\n"
     "  setHome                  Assume the current position is home.\n"
@@ -264,6 +266,22 @@ void onMove() {
     mmToSteps(ui.getWord(2).toInt()), 
     mmToSteps(ui.getWord(3).toInt())});
   interpretRc(rc);
+}
+
+// toSite <n>
+void onToSite() {
+  int siteIx = ui.getWord(1).toInt();
+  if (siteIx < 0 || siteIx > SITE_COUNT - 1) {
+    Serial.print(F("Invalid site number: "));
+    Serial.print(siteIx);
+    Serial.print(F(". Must be a number from 0 to "));
+    Serial.println(SITE_COUNT - 1);
+  }
+  fp_Point3D pt = sb_site[siteIx].loc;
+  pt.x = mmToSteps(pt.x);
+  pt.y = mmToSteps(pt.y);
+  pt.z = mmToSteps(pt.z + DIVER_HANG);            // Position is diver_HANG steps directly above the selected site
+  interpretRc(diver.moveTo(pt));
 }
 
 // sethome
@@ -706,6 +724,7 @@ void setup() {
     ui.attachCmdHandler("h", onHelp) &&
     ui.attachCmdHandler("move", onMove) &&
     ui.attachCmdHandler("m", onMove) &&
+    ui.attachCmdHandler("toSite", onToSite) &&
     ui.attachCmdHandler("sethome", onSethome) &&
     ui.attachCmdHandler("calibrate", onCalibrate) &&
     ui.attachCmdHandler("home", onHome) &&
