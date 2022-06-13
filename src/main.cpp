@@ -158,13 +158,6 @@ FlyingPlatform diver {
 UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
 Storyboard* sb = Storyboard::getInstance();
-sb_site_t sb_site[] = {
-    {{200, 420, 10}, false}, 
-    {{260, 270, 10}, false}, 
-    {{440, 360, 10}, false}, 
-    {{900, 480, 10}, false}, 
-    {{720, 460, 10}, false}};
-#define SITE_COUNT      ((int)(sizeof(sb_site) / sizeof(sb_site[0])))  // Number of sites
 
 fp_Point3D boatLoc = {HOME_X, HOME_Y, HOME_Z};
 uint8_t nCohorts = INIT_COHORTS;              // The number of cohorts the diver is currrently carrying
@@ -271,11 +264,11 @@ void onMove() {
 // toSite <n>
 void onToSite() {
   int siteIx = ui.getWord(1).toInt();
-  if (siteIx < 0 || siteIx > SITE_COUNT - 1) {
+  if (siteIx < 0 || siteIx > SB_SITE_COUNT - 1) {
     Serial.print(F("Invalid site number: "));
     Serial.print(siteIx);
     Serial.print(F(". Must be a number from 0 to "));
-    Serial.println(SITE_COUNT - 1);
+    Serial.println(SB_SITE_COUNT - 1);
   }
   fp_Point3D pt = sb_site[siteIx].loc;
   pt.x = mmToSteps(pt.x);

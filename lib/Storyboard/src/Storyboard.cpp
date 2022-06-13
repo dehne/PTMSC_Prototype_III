@@ -8,7 +8,7 @@
  * 
  *****
  * 
- * Storyboard V0.1, May 2022
+ * Storyboard V0.2, June 2022
  * Copyright (C) 2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +34,7 @@
 
 Storyboard* theInstance = nullptr;                     // The singleton Storyboard object
 
-
+// The default action handler. If all goes well, never invoked
 void _sb_defaultActionHandler(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
     #ifdef _SB_DEBUG
     Serial.print(F("Default action handler called for stateId: "));
@@ -46,6 +46,7 @@ void _sb_defaultActionHandler(sb_stateid_t stateId, sb_actid_t actionId, sb_clip
     #endif
 }
 
+// The default trigger handler. If all goes well, never invoked
 bool _sb_defaultTriggerHandler(sb_stateid_t stateId, sb_trigid_t triggerId) {
     #ifdef _SB_DEBUG
     Serial.print(F("Default trigger handler called for stateId: "));
@@ -64,7 +65,7 @@ Storyboard *Storyboard::getInstance() {
 }
 
 void Storyboard::begin() {
-    currentStateId = initialStateId;
+    currentStateId = SB_INIT_STATE;
     // Run through the new state's actions
     for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
         // Carry each one out in turn by invoking the corresponding action handler

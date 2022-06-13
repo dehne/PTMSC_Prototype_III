@@ -19,7 +19,7 @@
  * 
  *****
  * 
- * Storyboard V0.1, May 2022
+ * Storyboard V0.1, June 2022
  * Copyright (C) 2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -55,17 +55,6 @@ struct sb_site_t {                                          // A description of 
     bool isFull;                                            //   True id an outplacement has been placed there.
 };
                                                             // The location of the sites in the flying space (mm)
-
-#define SB_MAX_TRIGS    (18)                                // The maximum number of triggers a state can have (adjust as needed)
-#define SB_MAX_ACTS     (2)                                 // The maximum number of actions a state can have (adjust as needed)
-struct sb_state_t {                                         // The representation of a state
-    sb_stateid_t id;                                        //   Which state this is
-    sb_actid_t actionId[SB_MAX_ACTS];                       //   The action(s) to take, in sequence
-    sb_clipid_t clipId[SB_MAX_ACTS];                        //   The associated video clip; noClip if none
-    sb_trigid_t trigId[SB_MAX_TRIGS];                       //   The trigger(s) that cause a state change in precedence order
-    sb_stateid_t nextStateId[SB_MAX_TRIGS];                 //   The id of the new state upon occurance of corresponding trigger
-};
-
 const sb_state_t sbState[] = {
     {diving,                                                // State
         {setLoop}, {divingLoop},                            //   Action(s) Clip(s)
@@ -218,13 +207,16 @@ const sb_state_t sbState[] = {
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {diving, abandoned}}                                //   Next state(s)
 };
-const sb_stateid_t initialStateId = powerUp;                // The initial state of the machine
+#define SB_INIT_STATE           (sb_stateid_t::powerUp)     // The id of the initial state
 
-// The type of action handler invoked to carry out a specific action. The meaning of id is handler dependent
-typedef void(*sb_actionhandler)(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId);
-
-// The type of a trigger handler invoked to say whether a particular trigger has occurred
-typedef bool(*sb_triggerhandler_t)(sb_stateid_t stateId, sb_trigid_t triggerId);
+// The definition of the outplacement sites. Each consisting of a location in 3-space and whether it has been planted in
+static sb_site_t sb_site[] = {
+    {{200, 420, 10}, false}, 
+    {{260, 270, 10}, false}, 
+    {{440, 360, 10}, false}, 
+    {{900, 480, 10}, false}, 
+    {{720, 460, 10}, false}};
+#define SB_SITE_COUNT      ((int)(sizeof(sb_site) / sizeof(sb_site[0])))    // The number of sites there are
 
 class Storyboard {
     public:

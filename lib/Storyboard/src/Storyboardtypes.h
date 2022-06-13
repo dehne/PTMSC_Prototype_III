@@ -8,7 +8,7 @@
  * 
  *****
  * 
- * Storyboard V0.1, May 2022
+ * Storyboard V0.2, June 2022
  * Copyright (C) 2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,6 +30,7 @@
  * SOFTWARE. 
  * 
  ****/
+#pragma once
 // The storyboard state values and SB_N_STATES, the number of states in the storyboard
 enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned, 
                             arriveFullSite1, arriveFullSite2, arriveFullSite3, arriveFullSite4, arriveFullSite5,
@@ -59,3 +60,24 @@ enum sb_clipid_t : uint8_t {noClip, divingLoop, restingLoop, abandonedClip,
                             openSiteLoop1,      openSiteLoop2,      openSiteLoop3,      openSiteLoop4,      openSiteLoop5,
                             fillSiteClip1,      fillSiteClip2,      fillSiteClip3,      fillSiteClip4,      fillSiteClip5,
                             boatCohortsClip, outplantedClip, transitionClip, calibrateLoop, SB_N_CLIPS};
+
+// The type an "action handler" -- a function invoked to carry out a specific action -- must have. The id of the state which 
+// caused the invocation, the id of the action invoked, and its associated clip id are all pessed. The action handler should 
+// carry out the action and return.
+typedef void(*sb_actionhandler)(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId);
+
+// The type a "trigger handler" -- a function invoked to say whether a particular trigger has occurred -- must have. The ids 
+// of the state and of the trigger that caused the invocation are both passed. The trigger handler evaluates the situation and 
+// returns true if the trigger has occurred, false if not.
+typedef bool(*sb_triggerhandler_t)(sb_stateid_t stateId, sb_trigid_t triggerId);
+
+// The definiton of a state in the state machine
+#define SB_MAX_TRIGS    (18)                                // The maximum number of triggers a state can have (adjust as needed)
+#define SB_MAX_ACTS     (2)                                 // The maximum number of actions a state can have (adjust as needed)
+struct sb_state_t {                                         // The representation of a state
+    sb_stateid_t id;                                        //   Which state this is
+    sb_actid_t actionId[SB_MAX_ACTS];                       //   The action(s) to take, in sequence
+    sb_clipid_t clipId[SB_MAX_ACTS];                        //   The associated video clip; noClip if none
+    sb_trigid_t trigId[SB_MAX_TRIGS];                       //   The trigger(s) that cause a state change in precedence order
+    sb_stateid_t nextStateId[SB_MAX_TRIGS];                 //   The id of the new state upon occurance of corresponding trigger
+};
