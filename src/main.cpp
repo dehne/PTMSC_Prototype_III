@@ -67,6 +67,7 @@
 #include "Storyboard.h"
 
 #define DEBUG                       // Uncomment to turn on debugging messages
+//#define VERBOSE                     // Uncomment for even more debugging messages
 
 // For the stepper motors
 #define PIN_0D        (4)           // Motor driver 0 (x = 0, y = 0 winch) direction pin
@@ -367,7 +368,7 @@ void onToForward() {
   if (!controlsAreEnabled) {
     return;
   }
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Forward. "));
   interpretRc(diver.go());
   #else
@@ -385,7 +386,7 @@ void onToStop() {
   lastTouchMillis = millis();
   backing = false;  //Temp -- see onToBack()
   diver.stop();
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.println(F("console: Stop"));
   #endif
 }
@@ -396,7 +397,7 @@ void onToLeft() {
   if (!controlsAreEnabled) {
     return;
   }
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Left. "));
   interpretRc(diver.turn(fp_left));
   #else
@@ -407,7 +408,7 @@ void onToLeft() {
 // toNeutral
 void onToNeutral() {
   lastTouchMillis = millis();
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Neutral. "));
   interpretRc(diver.turn(fp_straight));
   #else
@@ -421,7 +422,7 @@ void onToRight() {
   if (!controlsAreEnabled) {
     return;
   }
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Right. "));
   interpretRc(diver.turn(fp_right));
   #else
@@ -440,7 +441,7 @@ void onDownPressed() {
   if (!controlsAreEnabled) {
     return;
   }
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Falling. "));
   interpretRc(diver.turn(fp_falling));
   #else
@@ -451,7 +452,7 @@ void onDownPressed() {
 // downReleased or upReleased
 void onUpOrDownReleased() {
   lastTouchMillis = millis();
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print("console: Level. ");
   interpretRc(diver.turn(fp_level));
   #else
@@ -465,7 +466,7 @@ void onUpPressed() {
   if (!controlsAreEnabled) {
     return;
   }
-  #ifdef DEBUG
+  #ifdef VERBOSE
   Serial.print(F("console: Rising. "));
   interpretRc(diver.turn(fp_rising));
   #else
@@ -560,7 +561,7 @@ bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
   uint16_t siteIx = (uint8_t)t - (uint8_t)awayFromSite1;
   fp_Point3D delta = {abs(sb_site[siteIx].loc.x - diverLoc.x), abs(sb_site[siteIx].loc.y - diverLoc.y), abs(sb_site[siteIx].loc.z - diverLoc.z)};
   if (delta.x > AWAY_MM || delta.y > AWAY_MM || delta.z > AWAY_MM || 3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > AWAY_RULER) {
-        #ifdef DEBUG
+        #ifdef VERBOSE
         Serial.print(F("onAwayFromSiteTrigger() siteIx: "));
         Serial.print(siteIx);
         Serial.print(F(", delta: "));
@@ -580,7 +581,7 @@ bool onAwayFromSiteTrigger(sb_stateid_t s, sb_trigid_t t) {
         Serial.print(F(" "));
         Serial.print(sb_site[siteIx].loc.y);
         Serial.print(F(" "));
-        Serial.print(sb_site[siteIx].loc.z);
+        Serial.println(sb_site[siteIx].loc.z);
         #endif
         return  true;
   }
@@ -673,9 +674,15 @@ void onDisableControlsAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipi
 
 // deposit<n> action handler for all sites
 void onDepositAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
-  uint8_t siteIx = (uint8_t)stateId - deposit1; // Determint which site we're depositing in
-  sb_site[siteIx].isFull = true;                // Make the deposit
+  uint8_t siteIx = (uint8_t)stateId - (uint8_t)fillSite1; // Determint which site we're depositing in
+  sb_site[siteIx].isFull = true;                  // Make the deposit
   setNCohorts(nCohorts - 1);
+  #ifdef DEBUG
+  Serial.print(F("Depositing at site "));
+  Serial.print(siteIx + 1);
+  Serial.print(F(" cohorts after deposit: "));
+  Serial.println(nCohorts);
+  #endif
 }
 
 // doSurvivalSequence 
