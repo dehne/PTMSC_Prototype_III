@@ -56,16 +56,16 @@ struct sb_site_t {                                          // A description of 
 };
                                                             // The location of the sites in the flying space (mm)
 const sb_state_t sbState[] = {
-    {diving,                                                // State
-        {setLoop}, {divingLoop},                            //   Action(s) Clip(s)
+    {diving,                                                        // State
+        {setLoop}, {divingLoop},                                    //   Action(s) Clip(s)
         {nearOpenSiteCohorts1, nearOpenSiteCohorts2, nearOpenSiteCohorts3, nearOpenSiteCohorts4, nearOpenSiteCohorts5,
          nearFullSiteCohorts1, nearFullSiteCohorts2, nearFullSiteCohorts3, nearFullSiteCohorts4, nearFullSiteCohorts5,
          nearSiteNoCohorts1,   nearSiteNoCohorts2,   nearSiteNoCohorts3,   nearSiteNoCohorts4,   nearSiteNoCohorts5,
-         nearBoatCohorts, nearBoatNoCohorts, asynchTimer},  //   Trigger(s)
+         nearBoatCohorts, nearBoatNoCohorts, asynchTimer},          //   Trigger(s)
         {arriveOpenSite1,      arriveOpenSite2,      arriveOpenSite3,      arriveOpenSite4,      arriveOpenSite5,
          arriveFullSite1,      arriveFullSite2,      arriveFullSite3,      arriveFullSite4,      arriveFullSite5,
          arriveSite1,          arriveSite2,          arriveSite3,          arriveSite4,          arriveSite5, 
-         arriveBoatA,     arriveboatB,       abandoned}},   //   Next state(s)
+         arriveBoatA,          arriveboatB,          timerPop}},    //   Next state(s)
 
     {resting,                                               // State
         {setLoop, prepareNew}, {restingLoop},               //   Action(s) Clip(s)
@@ -90,17 +90,17 @@ const sb_state_t sbState[] = {
     {arriveFullSite1,                                       // State
         {playClip}, {fullSiteClip1},                        //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveFullSite2,                                       // State
         {playClip}, {fullSiteClip2},                         //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveFullSite3,                                       // State
         {playClip}, {fullSiteClip3},                        //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveFullSite4,                                       // State
         {playClip}, {fullSiteClip4},                        //   Action(s) Clip(s)
@@ -110,22 +110,22 @@ const sb_state_t sbState[] = {
     {arriveFullSite5,                                       // State
         {playClip}, {fullSiteClip5},                        //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveOpenSite1,                                       // State
         {setLoop}, {openSiteLoop1},                         //   Action(s) Clip(s)
         {awayFromSite1, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite1, abandoned}},                    //   Next state(s)
+        {diving, fillSite1, timerPop}},                     //   Next state(s)
 
     {arriveOpenSite2,                                       // State
         {setLoop}, {openSiteLoop2},                         //   Action(s) Clip(s)
         {awayFromSite2, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite2, abandoned}},                    //   Next state(s)
+        {diving, fillSite2, timerPop}},                     //   Next state(s)
 
     {arriveOpenSite3,                                       // State
         {setLoop}, {openSiteLoop3},                         //   Action(s) Clip(s)
         {awayFromSite3, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite3, abandoned}},                    //   Next state(s)
+        {diving, fillSite3, timerPop}},                     //   Next state(s)
 
     {arriveOpenSite4,                                       // State
         {setLoop}, {openSiteLoop4},                         //   Action(s) Clip(s)
@@ -135,67 +135,67 @@ const sb_state_t sbState[] = {
     {arriveOpenSite5,                                       // State
         {setLoop}, {openSiteLoop5},                         //   Action(s) Clip(s)
         {awayFromSite5, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite5, abandoned}},                    //   Next state(s)
+        {diving, fillSite5, timerPop}},                     //   Next state(s)
 
     {fillSite1,                                             // State
         {playClip, deposit1}, {fillSiteClip1},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {diving, outplanted, abandoned}},                   //   Next state(s)
+        {diving, outplanted, timerPop}},                    //   Next state(s)
 
     {fillSite2,                                             // State
         {playClip, deposit2}, {fillSiteClip2},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {diving, outplanted, abandoned}},                   //   Next state(s)
+        {diving, outplanted, timerPop}},                    //   Next state(s)
 
     {fillSite3,                                             // State
         {playClip, deposit3}, {fillSiteClip3},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {diving, outplanted, abandoned}},                   //   Next state(s)
+        {diving, outplanted, timerPop}},                    //   Next state(s)
 
     {fillSite4,                                             // State
         {playClip, deposit4}, {fillSiteClip4},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {diving, outplanted, abandoned}},                   //   Next state(s)
+        {diving, outplanted, timerPop}},                    //   Next state(s)
 
     {fillSite5,                                             // State
         {playClip, deposit5}, {fillSiteClip5},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {diving, outplanted, abandoned}},                   //   Next state(s)
+        {diving, outplanted, timerPop}},                    //   Next state(s)
 
     {arriveSite1,                                           // State
         {playClip}, {siteNoCohortsClip1},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveSite2,                                           // State
         {playClip}, {siteNoCohortsClip2},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveSite3,                                           // State
         {playClip}, {siteNoCohortsClip3},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveSite4,                                           // State
         {playClip}, {siteNoCohortsClip4},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveSite5,                                           // State
         {playClip}, {siteNoCohortsClip5},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveBoatA,                                           // State
         {playClip}, {boatCohortsClip},                      //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
 
     {arriveboatB,                                           // State
         {playClip, disableControls}, {transitionClip},      //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {atBoatB, abandoned}},                              //   Next state(s)
+        {atBoatB, timerPop}},                               //   Next state(s)
 
     {atBoatB,                                               // State
         {doSurvivalSequence}, {noClip},                     //   Action(s) Clip(s)
@@ -205,7 +205,7 @@ const sb_state_t sbState[] = {
     {outplanted,                                            // State
         {playClip}, {outplantedClip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, abandoned}}                                //   Next state(s)
+        {diving, timerPop}}                                 //   Next state(s)
 };
 #define SB_INIT_STATE           (sb_stateid_t::powerUp)     // The id of the initial state
 
