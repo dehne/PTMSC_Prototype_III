@@ -610,6 +610,9 @@ bool onvideoEndsNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
 bool isNearBoat() {
   fp_Point3D diverLoc = diver.where();
   fp_Point3D delta;
+  diverLoc.x = stepsToMm(diverLoc.x);
+  diverLoc.y = stepsToMm(diverLoc.y);
+  diverLoc.z = stepsToMm(diverLoc.z) - DIVER_HANG;
   if (((delta.x = abs(boatLoc.x - diverLoc.x)) > NEAR_MM) ||
       ((delta.y = abs(boatLoc.y - diverLoc.y)) > NEAR_MM) ||
       ((delta.z = abs(boatLoc.z - diverLoc.z)) > NEAR_MM) ||
@@ -632,6 +635,11 @@ bool onNearBoatNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
 // pressPlaceButton trigger handler
 bool onPressPlaceButtonTrigger(sb_stateid_t s, sb_trigid_t t) {
   return console.placeLedIsOn();
+}
+
+// sequence finished trigger handler
+bool onSequenceFinished(sb_stateid_t s, sb_trigid_t t) {
+  return true;    // Stub
 }
 
 // calibrated trigger handler
@@ -786,6 +794,7 @@ void setup() {
   sb->attachTriggerHandler(nearBoatCohorts, onNearBoatCohortsTrigger);
   sb->attachTriggerHandler(nearBoatNoCohorts, onNearBoatNoCohortsTrigger);
   sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
+  sb->attachTriggerHandler(sequenceFinished, onSequenceFinished);
   sb->attachTriggerHandler(calibrated, onCalibratedTrigger);
 
   // Initialize the Storyboard action handlers

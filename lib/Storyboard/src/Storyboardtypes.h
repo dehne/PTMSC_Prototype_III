@@ -37,7 +37,7 @@ enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned,
                             arriveOpenSite1, arriveOpenSite2, arriveOpenSite3, arriveOpenSite4, arriveOpenSite5,
                             fillSite1,       fillSite2,       fillSite3,       fillSite4,       fillSite5,
                             arriveSite1,     arriveSite2,     arriveSite3,     arriveSite4,     arriveSite5,
-                            arriveBoatA, arriveboatB, atBoatB, outplanted, SB_N_STATES};
+                            arriveBoatA, arriveboatB, atBoatB, outplanted, instruct, SB_N_STATES};
 
 // The storyboard trigger values and SB_N_TRIGS, the number of triggers in the storyboard
 enum sb_trigid_t : uint8_t {nullTrigger, always, asynchTimer, videoEnds, touchJoystick, 
@@ -59,7 +59,7 @@ enum sb_clipid_t : uint8_t {noClip, divingLoop, restingLoop, abandonedClip,
                             siteNoCohortsClip1, siteNoCohortsClip2, siteNoCohortsClip3, siteNoCohortsClip4, siteNoCohortsClip5,
                             openSiteLoop1,      openSiteLoop2,      openSiteLoop3,      openSiteLoop4,      openSiteLoop5,
                             fillSiteClip1,      fillSiteClip2,      fillSiteClip3,      fillSiteClip4,      fillSiteClip5,
-                            boatCohortsClip, outplantedClip, transitionClip, calibrateLoop, SB_N_CLIPS};
+                            boatCohortsClip, outplantedClip, transitionClip, calibrateLoop, instructClip, SB_N_CLIPS};
 
 // The type an "action handler" -- a function invoked to carry out a specific action -- must have. The id of the state which 
 // caused the invocation, the id of the action invoked, and its associated clip id are all pessed. The action handler should 

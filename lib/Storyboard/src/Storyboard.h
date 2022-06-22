@@ -70,7 +70,7 @@ const sb_state_t sbState[] = {
     {resting,                                               // State
         {setLoop, prepareNew}, {restingLoop},               //   Action(s) Clip(s)
         {touchJoystick},                                    //   Trigger(s)
-        {diving}},                                          //   Next state(s)
+        {instruct}},                                        //   Next state(s)
         
     {timerPop,                                              // State
         {disableControls}, {noClip},                        //   Action(s) Clip(s)
@@ -205,7 +205,11 @@ const sb_state_t sbState[] = {
     {outplanted,                                            // State
         {playClip}, {outplantedClip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}}                                 //   Next state(s)
+        {diving, timerPop}},                                //   Next state(s)
+    {instruct,                                              // State
+        {playClip}, {instructClip},                         //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {diving}}                                           //   Next state(s)
 };
 #define SB_INIT_STATE           (sb_stateid_t::powerUp)     // The id of the initial state
 
