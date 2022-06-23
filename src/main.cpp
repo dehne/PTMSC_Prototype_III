@@ -160,7 +160,7 @@ UserInput ui {Serial};
 Console console {SW_LEFT, SW_FORWARD, SW_RIGHT, SW_BACK, SW_DOWN, SW_UP, SW_PLACE, LED_PLACE};
 Storyboard* sb = Storyboard::getInstance();
 
-fp_Point3D boatLoc = {HOME_X, HOME_Y, HOME_Z + DIVER_HANG};
+fp_Point3D boatLoc = {HOME_X, HOME_Y, HOME_Z - DIVER_HANG};
 uint8_t nCohorts = INIT_COHORTS;              // The number of cohorts the diver is currrently carrying
 unsigned long lastTouchMillis = 0;            // millis at when the last console evrnt happened
 bool videoHasEnded = false;                   // From media player: The last requested video clip finished
