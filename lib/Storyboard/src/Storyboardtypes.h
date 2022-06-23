@@ -8,7 +8,7 @@
  * 
  *****
  * 
- * Storyboard V0.2, June 2022
+ * Storyboard V0.3, June 2022
  * Copyright (C) 2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,7 +45,7 @@ enum sb_trigid_t : uint8_t {nullTrigger, always, asynchTimer, videoEnds, touchJo
                             nearFullSiteCohorts1, nearFullSiteCohorts2, nearFullSiteCohorts3, nearFullSiteCohorts4, nearFullSiteCohorts5,
                             nearSiteNoCohorts1,   nearSiteNoCohorts2,   nearSiteNoCohorts3,   nearSiteNoCohorts4,   nearSiteNoCohorts5,
                             awayFromSite1,        awayFromSite2,        awayFromSite3,        awayFromSite4,        awayFromSite5,
-                            videoEndsCohorts, videoEndsNoCohorts, nearBoatCohorts, nearBoatNoCohorts, pressPlaceButton, 
+                            videoEndsCohorts, videoEndsNoCohorts, nearBoatCohorts, nearBoatNoCohorts, awayFromBoat, pressPlaceButton, 
                             sequenceFinished, calibrated, SB_N_TRIGS};
 
 // The storyboard action values
@@ -55,11 +55,11 @@ enum sb_actid_t : uint8_t  {nullAction, setLoop, playClip, prepareNew, disableCo
 
 // The storyboard clip values
 enum sb_clipid_t : uint8_t {noClip, divingLoop, restingLoop, abandonedClip, 
-                            fullSiteClip1,      fullSiteClip2,      fullSiteClip3,      fullSiteClip4,      fullSiteClip5,
-                            siteNoCohortsClip1, siteNoCohortsClip2, siteNoCohortsClip3, siteNoCohortsClip4, siteNoCohortsClip5,
+                            fullSiteLoop1,      fullSiteLoop2,      fullSiteLoop3,      fullSiteLoop4,      fullSiteLoop5,
+                            siteNoCohortsLoop1, siteNoCohortsLoop2, siteNoCohortsLoop3, siteNoCohortsLoop4, siteNoCohortsLoop5,
                             openSiteLoop1,      openSiteLoop2,      openSiteLoop3,      openSiteLoop4,      openSiteLoop5,
                             fillSiteClip1,      fillSiteClip2,      fillSiteClip3,      fillSiteClip4,      fillSiteClip5,
-                            boatCohortsClip, outplantedClip, transitionClip, calibrateLoop, instructClip, SB_N_CLIPS};
+                            boatCohortsLoop, outplantedClip, transitionClip, calibrateLoop, instructLoop, SB_N_CLIPS};
 
 // The type an "action handler" -- a function invoked to carry out a specific action -- must have. The id of the state which 
 // caused the invocation, the id of the action invoked, and its associated clip id are all pessed. The action handler should 

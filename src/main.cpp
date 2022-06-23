@@ -1,5 +1,5 @@
 /****
- * PTMSCPrototype V0.77, February 2022
+ * PTMSCPrototype V0.80, June 2022
  * 
  * Drive the pinto abalone exhibition prototype simulating a scuba diver doing
  * abalone outplanting using a "flying camera" mechanism simiar in principle 
@@ -632,6 +632,19 @@ bool onNearBoatNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
   return isNearBoat() && nCohorts == 0;
 }
 
+// awayFromBoat
+bool onAwayFromBoatTrigger(sb_stateid_t s, sb_trigid_t t) {
+  fp_Point3D diverLoc = diver.where();
+  diverLoc.x = stepsToMm(diverLoc.x);
+  diverLoc.y = stepsToMm(diverLoc.y);
+  diverLoc.z = stepsToMm(diverLoc.z) - DIVER_HANG;
+  fp_Point3D delta = {abs(boatLoc.x - diverLoc.x), abs(boatLoc.y - diverLoc.y), abs(boatLoc.z - diverLoc.z)};
+  if (delta.x > AWAY_MM || delta.y > AWAY_MM || delta.z > AWAY_MM || 3 * (delta.x * delta.x + delta.y * delta.y + delta.z * delta.z) > AWAY_RULER) {
+    return true;
+  }
+  return false;
+}
+
 // pressPlaceButton trigger handler
 bool onPressPlaceButtonTrigger(sb_stateid_t s, sb_trigid_t t) {
   return console.placeLedIsOn();
@@ -793,6 +806,7 @@ void setup() {
   sb->attachTriggerHandler(videoEndsNoCohorts, onvideoEndsNoCohortsTrigger);
   sb->attachTriggerHandler(nearBoatCohorts, onNearBoatCohortsTrigger);
   sb->attachTriggerHandler(nearBoatNoCohorts, onNearBoatNoCohortsTrigger);
+  sb->attachTriggerHandler(awayFromBoat, onAwayFromBoatTrigger);
   sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
   sb->attachTriggerHandler(sequenceFinished, onSequenceFinished);
   sb->attachTriggerHandler(calibrated, onCalibratedTrigger);
