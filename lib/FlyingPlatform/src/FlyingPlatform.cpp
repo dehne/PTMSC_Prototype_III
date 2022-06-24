@@ -248,7 +248,9 @@ ISR(TIMER3_COMPA_vect) {
  * that of hHeading. For Pixel packets, dddddd is the rrggbb value, where rr, 
  * gg, and bb can be 0 (off) 1 .. 3 (max bright). Pixel 0 is the forward-
  * facing pixel, pixel 1 faces backward. For Control packets, dddddd = 0 
- * means do a homing operation. Other values are reserved.
+ * is an idle packet which can be used to establish sync without changing 
+ * anything. dddddd = 1 means do a homing operation. Other values are 
+ * reserved.
  * 
  * Transmission occurs in transmission groups of 1 to three packets per group. 
  * A group starts with at least FP_DIVER_MIN_SILENCE μs of 0 (LOW) on the 
@@ -568,7 +570,8 @@ void FlyingPlatform::begin() {
                                                         // ICES4 = 0      i.e., Disable Input Capture Edge Select
   }
   packets[0] = FP_DIVER_IDLE_PACKET;                    // Send the diver an idle packet to establish sync
-  packetCount = 1;
+  packets[1] = FP_DIVER_HOME_PACKET;                    // And then a home packet to ensure she's heading where we assume she is
+  packetCount = 2;
 }
 
 bool FlyingPlatform::run() {

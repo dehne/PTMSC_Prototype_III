@@ -355,7 +355,6 @@ void onPseudoCommandVidEnd() {
 
 // toForward
 void onToForward() {
-  lastTouchMillis = millis();
   if (console.placeLedIsOn() && !diver.isCalibrated() && diver.isEnabled()) {
     #ifdef DEBUG
     Serial.print(F("Console: calibrate. "));
@@ -365,6 +364,7 @@ void onToForward() {
     #endif
     return;
   }
+  lastTouchMillis = millis();
   if (!controlsAreEnabled) {
     return;
   }
@@ -383,7 +383,6 @@ void onToBack() {
 
 // toStop
 void onToStop() {
-  lastTouchMillis = millis();
   backing = false;  //Temp -- see onToBack()
   diver.stop();
   #ifdef VERBOSE
