@@ -535,19 +535,19 @@ bool isNearSite(uint8_t siteIx) {
 
 // nearOpenSiteCohorts<n> trigger handler for all sites
 bool onNearOpenSiteCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
-  uint16_t siteIx = (uint8_t)t - (uint8_t)nearOpenSiteCohorts1;
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearOpenSite1Cohorts;
   return isNearSite(siteIx) && !sb_site[siteIx].isFull && nCohorts > 0;
 }
 
 // nearFullSiteCohorts<n> trigger handler for all sites
 bool onNearFullSiteCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
-  uint16_t siteIx = (uint8_t)t - (uint8_t)nearFullSiteCohorts1;
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearFullSite1Cohorts;
   return isNearSite(siteIx) && sb_site[siteIx].isFull && nCohorts > 0;
 }
 
 // nearSiteNoCohorts<n> trigger handler for all sites
 bool onNearSiteNoCohortsTrigger(sb_stateid_t s, sb_trigid_t t) {
-  uint16_t siteIx = (uint8_t)t - (uint8_t)nearSiteNoCohorts1;
+  uint16_t siteIx = (uint8_t)t - (uint8_t)nearSite1NoCohorts;
   return isNearSite(siteIx) && nCohorts == 0;
 }
 
@@ -781,21 +781,21 @@ void setup() {
   sb->attachTriggerHandler(asynchTimer, onAsynchTimerTrigger);
   sb->attachTriggerHandler(videoEnds, onVideoEndsTrigger);
   sb->attachTriggerHandler(touchJoystick, onTouchJoystickTrigger);
-  sb->attachTriggerHandler(nearOpenSiteCohorts1, onNearOpenSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearOpenSiteCohorts2, onNearOpenSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearOpenSiteCohorts3, onNearOpenSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearOpenSiteCohorts4, onNearOpenSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearOpenSiteCohorts5, onNearOpenSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearFullSiteCohorts1, onNearFullSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearFullSiteCohorts2, onNearFullSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearFullSiteCohorts3, onNearFullSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearFullSiteCohorts4, onNearFullSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearFullSiteCohorts5, onNearFullSiteCohortsTrigger);
-  sb->attachTriggerHandler(nearSiteNoCohorts1, onNearSiteNoCohortsTrigger);
-  sb->attachTriggerHandler(nearSiteNoCohorts2, onNearSiteNoCohortsTrigger);
-  sb->attachTriggerHandler(nearSiteNoCohorts3, onNearSiteNoCohortsTrigger);
-  sb->attachTriggerHandler(nearSiteNoCohorts4, onNearSiteNoCohortsTrigger);
-  sb->attachTriggerHandler(nearSiteNoCohorts5, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSite1Cohorts, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSite2Cohorts, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSite3Cohorts, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSite4Cohorts, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearOpenSite5Cohorts, onNearOpenSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSite1Cohorts, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSite2Cohorts, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSite3Cohorts, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSite4Cohorts, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearFullSite5Cohorts, onNearFullSiteCohortsTrigger);
+  sb->attachTriggerHandler(nearSite1NoCohorts, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSite2NoCohorts, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSite3NoCohorts, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSite4NoCohorts, onNearSiteNoCohortsTrigger);
+  sb->attachTriggerHandler(nearSite5NoCohorts, onNearSiteNoCohortsTrigger);
   sb->attachTriggerHandler(awayFromSite1, onAwayFromSiteTrigger);
   sb->attachTriggerHandler(awayFromSite2, onAwayFromSiteTrigger);
   sb->attachTriggerHandler(awayFromSite3, onAwayFromSiteTrigger);
