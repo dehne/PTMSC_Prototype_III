@@ -58,9 +58,9 @@ struct sb_site_t {                                          // A description of 
 const sb_state_t sbState[] = {
     {diving,                                                        // State
         {setLoop}, {divingLoop},                                    //   Action(s) Clip(s)
-        {nearOpenSiteCohorts1, nearOpenSiteCohorts2, nearOpenSiteCohorts3, nearOpenSiteCohorts4, nearOpenSiteCohorts5,
-         nearFullSiteCohorts1, nearFullSiteCohorts2, nearFullSiteCohorts3, nearFullSiteCohorts4, nearFullSiteCohorts5,
-         nearSiteNoCohorts1,   nearSiteNoCohorts2,   nearSiteNoCohorts3,   nearSiteNoCohorts4,   nearSiteNoCohorts5,
+        {nearOpenSite1Cohorts, nearOpenSite2Cohorts, nearOpenSite3Cohorts, nearOpenSite4Cohorts, nearOpenSite5Cohorts,
+         nearFullSite1Cohorts, nearFullSite1Cohorts, nearFullSite3Cohorts, nearFullSite4Cohorts, nearFullSite5Cohorts,
+         nearSite1NoCohorts,   nearSite2NoCohorts,   nearSite3NoCohorts,   nearSite4NoCohorts,   nearSite5NoCohorts,
          nearBoatCohorts, nearBoatNoCohorts, asynchTimer},          //   Trigger(s)
         {arriveOpenSite1,      arriveOpenSite2,      arriveOpenSite3,      arriveOpenSite4,      arriveOpenSite5,
          arriveFullSite1,      arriveFullSite2,      arriveFullSite3,      arriveFullSite4,      arriveFullSite5,
@@ -223,7 +223,7 @@ const sb_state_t sbState[] = {
         {atBoatB, timerPop}},                               //   Next state(s)
 
     {atBoatB,                                               // State
-        {doSurvivalSequence}, {noClip},                     //   Action(s) Clip(s)
+        {survival}, {noClip},                               //   Action(s) Clip(s)
         {sequenceFinished},                                 //   Trigger(s)
         {resting}},                                         //   Next state(s)
 

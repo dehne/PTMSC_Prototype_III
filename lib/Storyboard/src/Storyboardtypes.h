@@ -39,21 +39,21 @@ enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned,
                             atSite1,         atSite2,         atSite3,         atSite4,         atSite5,
                             arriveSite1,     arriveSite2,     arriveSite3,     arriveSite4,     arriveSite5,
                             outAtSite1,      outAtSite2,      outAtSite3,      outAtSite4,      outAtSite5,
-                            arriveBoatA, arriveboatB, atBoatB, instruct, SB_N_STATES};
+                            arriveBoatA,     arriveboatB,     atBoatB,         instruct,        SB_N_STATES};
 
 // The storyboard trigger values and SB_N_TRIGS, the number of triggers in the storyboard
 enum sb_trigid_t : uint8_t {nullTrigger, always, asynchTimer, videoEnds, touchJoystick, 
-                            nearOpenSiteCohorts1, nearOpenSiteCohorts2, nearOpenSiteCohorts3, nearOpenSiteCohorts4, nearOpenSiteCohorts5,
-                            nearFullSiteCohorts1, nearFullSiteCohorts2, nearFullSiteCohorts3, nearFullSiteCohorts4, nearFullSiteCohorts5,
-                            nearSiteNoCohorts1,   nearSiteNoCohorts2,   nearSiteNoCohorts3,   nearSiteNoCohorts4,   nearSiteNoCohorts5,
+                            nearOpenSite1Cohorts, nearOpenSite2Cohorts, nearOpenSite3Cohorts, nearOpenSite4Cohorts, nearOpenSite5Cohorts,
+                            nearFullSite1Cohorts, nearFullSite2Cohorts, nearFullSite3Cohorts, nearFullSite4Cohorts, nearFullSite5Cohorts,
+                            nearSite1NoCohorts,   nearSite2NoCohorts,   nearSite3NoCohorts,   nearSite4NoCohorts,   nearSite5NoCohorts,
                             awayFromSite1,        awayFromSite2,        awayFromSite3,        awayFromSite4,        awayFromSite5,
-                            videoEndsCohorts, videoEndsNoCohorts, nearBoatCohorts, nearBoatNoCohorts, awayFromBoat, pressPlaceButton, 
-                            sequenceFinished, calibrated, SB_N_TRIGS};
+                            videoEndsCohorts,     videoEndsNoCohorts,   nearBoatCohorts,      nearBoatNoCohorts,    awayFromBoat, pressPlaceButton, 
+                            sequenceFinished,     calibrated,           SB_N_TRIGS};
 
 // The storyboard action values
-enum sb_actid_t : uint8_t  {nullAction, setLoop, playClip, prepareNew, disableControls, 
-                            deposit1, deposit2, deposit3, deposit4, deposit5,
-                            doSurvivalSequence, SB_N_ACTS};
+enum sb_actid_t : uint8_t  {nullAction, setLoop,  playClip, prepareNew, disableControls, 
+                            deposit1,   deposit2, deposit3, deposit4, deposit5,
+                            survival,   SB_N_ACTS};
 
 // The storyboard clip values
 enum sb_clipid_t : uint8_t {noClip,             divingLoop,         restingLoop,        abandonedClip, 
