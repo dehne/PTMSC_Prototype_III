@@ -431,7 +431,6 @@ void onToRight() {
 
 // downPressed
 void onDownPressed() {
-  lastTouchMillis = millis();
   // Temp: Need a way to stop media player: joystick back, then press Down
   if (backing) {
     Serial.println(F("\n!stop")); // Issue stop command to media player
@@ -450,7 +449,6 @@ void onDownPressed() {
 
 // downReleased or upReleased
 void onUpOrDownReleased() {
-  lastTouchMillis = millis();
   #ifdef VERBOSE
   Serial.print("console: Level. ");
   interpretRc(diver.turn(fp_level));
@@ -461,7 +459,6 @@ void onUpOrDownReleased() {
 
 // upPressed
 void onUpPressed() {
-  lastTouchMillis = millis();
   if (!controlsAreEnabled) {
     return;
   }
@@ -475,13 +472,11 @@ void onUpPressed() {
 
 // placePressed
 void onPlacePressed() {
-  lastTouchMillis = millis();
   console.setPlaceLED(true);
 }
 
 // placeReleased
 void onPlaceReleased() {
-  lastTouchMillis = millis();
   console.setPlaceLED(false);
 }
 
@@ -820,6 +815,7 @@ void setup() {
   sb->attachActionHandler(deposit3, onDepositAction);
   sb->attachActionHandler(deposit4, onDepositAction);
   sb->attachActionHandler(deposit5, onDepositAction);
+  sb->attachActionHandler(survival, onDoSurvivalSequence);
 
   sb->begin();  //Start the state machine running
 

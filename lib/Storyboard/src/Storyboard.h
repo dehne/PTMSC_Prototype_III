@@ -212,6 +212,31 @@ const sb_state_t sbState[] = {
         {awayFromSite5, asynchTimer},                       //   Trigger(s)
         {diving, timerPop}},                                //   Next state(s)
 
+    {outAtSite1,                                            // State
+        {playClip}, {outAtSite1Clip},                       //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite1, timerPop}},                               //   Next state(s)
+        
+    {outAtSite2,                                            // State
+        {playClip}, {outAtSite2Clip},                       //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite2, timerPop}},                               //   Next state(s)
+        
+    {outAtSite3,                                            // State
+        {playClip}, {outAtSite3Clip},                       //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite3, timerPop}},                               //   Next state(s)
+        
+    {outAtSite4,                                            // State
+        {playClip}, {outAtSite4Clip},                       //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite4, timerPop}},                               //   Next state(s)
+        
+    {outAtSite5,                                            // State
+        {playClip}, {outAtSite5Clip},                       //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite5, timerPop}},                               //   Next state(s)
+        
     {arriveBoatA,                                           // State
         {setLoop}, {boatCohortsLoop},                       //   Action(s) Clip(s)
         {awayFromBoat, asynchTimer},                        //   Trigger(s)
@@ -227,31 +252,6 @@ const sb_state_t sbState[] = {
         {sequenceFinished},                                 //   Trigger(s)
         {resting}},                                         //   Next state(s)
 
-    {outAtSite1,                                            // State
-        {playClip}, {outAtSite1Clip},                       //   Action(s) Clip(s)
-        {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-        
-    {outAtSite2,                                            // State
-        {playClip}, {outAtSite2Clip},                       //   Action(s) Clip(s)
-        {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-        
-    {outAtSite3,                                            // State
-        {playClip}, {outAtSite3Clip},                       //   Action(s) Clip(s)
-        {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-        
-    {outAtSite4,                                            // State
-        {playClip}, {outAtSite4Clip},                       //   Action(s) Clip(s)
-        {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-        
-    {outAtSite5,                                            // State
-        {playClip}, {outAtSite5Clip},                       //   Action(s) Clip(s)
-        {videoEnds, asynchTimer},                           //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-        
     {instruct,                                              // State
         {setLoop}, {instructLoop},                          //   Action(s) Clip(s)
         {awayFromBoat},                                     //   Trigger(s)
@@ -332,7 +332,7 @@ class Storyboard {
          ****/
         Storyboard();
 
-        sb_stateid_t currentStateId = powerUp;              // The current state of the storyboard state machine
+        sb_stateid_t currentStateId;                        // The current state of the storyboard state machine
         sb_actionhandler actionHandler[SB_N_ACTS];          // The registry of action handler functions
         sb_triggerhandler_t triggerHandler[SB_N_TRIGS];     // The registry of trigger sensor functions
         unsigned long lastScanMillis;                       // millis() at the point we last scanned for triggers having occurred

@@ -65,6 +65,20 @@ Storyboard *Storyboard::getInstance() {
 }
 
 void Storyboard::begin() {
+    #ifdef _SB_DEBUG
+    // Validate that the number of the state enumeration and the index into sbState are identical.
+    // When changing sbState to add, remove or rearrange states, it's easy to mess this up And
+    // hard to figure out.
+    for (uint8_t stateIx = 0; stateIx < SB_N_STATES; stateIx++) {
+        if (stateIx != (uint8_t)sbState[stateIx].id) {
+            Serial.print(F("State numbering mismatch. stateIx: "));
+            Serial.print(stateIx);
+            Serial.print(F(" doesn't match sbState[stateIx].id: "));
+            Serial.println(sbState[stateIx].id);
+
+        }
+    }
+    #endif
     currentStateId = SB_INIT_STATE;
     // Run through the new state's actions
     for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
@@ -91,6 +105,23 @@ void Storyboard::run() {
             currentStateId = sbState[currentStateId].nextStateId[triggerIx];
             #ifdef _SB_DEBUG
             Serial.println(currentStateId);
+            Serial.print(F("Checking definition of state "));
+            Serial.print(currentStateId);
+            Serial.print(F(". Triggers "));
+            for (uint8_t t = 0; t < SB_MAX_TRIGS && sbState[currentStateId].trigId[t] != 0; t++) {
+                Serial.print(t);
+                Serial.print(F(":"));
+                Serial.print(sbState[currentStateId].trigId[t]);
+                Serial.print(F(" "));
+            }
+            Serial.print(F("Actions "));
+            for (uint8_t a = 0; a < SB_MAX_ACTS && sbState[currentStateId].actionId[a] != 0; a++) {
+                Serial.print(a);
+                Serial.print(F(":"));
+                Serial.print(sbState[currentStateId].actionId[a]);
+                Serial.print(F(" "));
+            }
+            Serial.print(F("\n"));
             #endif
             // Then run through the new state's actions
             for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {
