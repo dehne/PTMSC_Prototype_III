@@ -570,7 +570,7 @@ void FlyingPlatform::begin() {
                                                         // ICES4 = 0      i.e., Disable Input Capture Edge Select
   }
   packets[0] = FP_DIVER_IDLE_PACKET;                    // Send the diver an idle packet to establish sync
-  packets[1] = FP_DIVER_HOME_PACKET;                    // And then a home packet to ensure she's heading where we assume she is
+  packets[1] = FP_DIVER_TT_HEAD + 0;                    // And then a packet head her in direction 0 to ensure she's heading where we assume she is
   packetCount = 2;
 }
 
