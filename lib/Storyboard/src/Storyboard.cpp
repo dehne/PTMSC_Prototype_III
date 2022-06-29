@@ -105,6 +105,7 @@ void Storyboard::run() {
             currentStateId = sbState[currentStateId].nextStateId[triggerIx];
             #ifdef _SB_DEBUG
             Serial.println(currentStateId);
+            #ifdef _SB_VERBOSE
             Serial.print(F("Checking definition of state "));
             Serial.print(currentStateId);
             Serial.print(F(". Triggers "));
@@ -122,6 +123,7 @@ void Storyboard::run() {
                 Serial.print(F(" "));
             }
             Serial.print(F("\n"));
+            #endif
             #endif
             // Then run through the new state's actions
             for (uint8_t actionIx = 0; actionIx < SB_MAX_ACTS && sbState[currentStateId].actionId[actionIx] != 0; actionIx++) {

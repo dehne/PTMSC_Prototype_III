@@ -47,6 +47,7 @@
 #include "Storyboardtypes.h"
 
 #define _SB_DEBUG                                           // Uncomment to enable debug printing
+//#define _SB_VERBOSE                                         // Uncomment for even more
 #define SB_SCAN_MILLIS  (300)                               // millis() between scanning for triggers
 
 
