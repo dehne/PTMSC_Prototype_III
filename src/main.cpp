@@ -459,6 +459,11 @@ void onUpOrDownReleased() {
 
 // upPressed
 void onUpPressed() {
+  //Temp: Need a way to have media player toggle fullscreen mode: joystick back then press Up
+  if(backing) {
+    Serial.println(F("\n!toggleFS"));
+    return;
+  }
   if (!controlsAreEnabled) {
     return;
   }
