@@ -40,7 +40,7 @@ These states, **atSite1** to **atSite5**, are entered from **fillSite<n>** or fr
 
 ### arriveSite<n>
 
-These states, **arriveSite1** to **arriveSite5**, are entered from **diving** when the diver, carrying no cohorts to be outplanted, gets near the corresponding site. The state plays "site<n>NoCohortsLoop" which shows the site as background with text saying that we really need to get back to the boat since the mission is complete. When the diver moves away from the site, the state changes to **diving**.
+These states, **arriveSite1** to **arriveSite5**, are entered from **diving** when the diver, carrying no cohorts to be outplanted, gets near the corresponding site. The states play "site<n>NoCohortsClip" which shows the site as background with text saying that we really need to get back to the boat since the mission is complete. When the clip finishes, the state changes to **atSite<n>**.
 
 ### outAtSite<n>
 

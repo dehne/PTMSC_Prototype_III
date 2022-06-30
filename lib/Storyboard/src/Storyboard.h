@@ -141,27 +141,27 @@ const sb_state_t sbState[] = {
     {fillSite1,                                             // State
         {playClip, deposit1}, {fillSite1Clip},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite1, outAtSite1, timerPop}},                    //   Next state(s)
+        {atSite1, outAtSite1, timerPop}},                   //   Next state(s)
 
     {fillSite2,                                             // State
         {playClip, deposit2}, {fillSite2Clip},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite2, outAtSite2, timerPop}},                    //   Next state(s)
+        {atSite2, outAtSite2, timerPop}},                   //   Next state(s)
 
     {fillSite3,                                             // State
         {playClip, deposit3}, {fillSite3Clip},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite3, outAtSite3, timerPop}},                    //   Next state(s)
+        {atSite3, outAtSite3, timerPop}},                   //   Next state(s)
 
     {fillSite4,                                             // State
         {playClip, deposit4}, {fillSite4Clip},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite4, outAtSite4, timerPop}},                    //   Next state(s)
+        {atSite4, outAtSite4, timerPop}},                   //   Next state(s)
 
     {fillSite5,                                             // State
         {playClip, deposit5}, {fillSite5Clip},              //   Action(s) Clip(s)
         {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite5, outAtSite5, timerPop}},                    //   Next state(s)
+        {atSite5, outAtSite5, timerPop}},                   //   Next state(s)
 
     {atSite1,                                               // State
         {setLoop}, {atSite1Loop},                           //   Action(s) Clip(s)
@@ -189,29 +189,29 @@ const sb_state_t sbState[] = {
         {diving, timerPop}},                                //   Next state(s)
 
     {arriveSite1,                                           // State
-        {setLoop}, {site1NoCohortsLoop},                    //   Action(s) Clip(s)
-        {awayFromSite1, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+        {playClip}, {site1NoCohortsClip},                   //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite1, timerPop}},                               //   Next state(s)
 
     {arriveSite2,                                           // State
-        {setLoop}, {site2NoCohortsLoop},                    //   Action(s) Clip(s)
-        {awayFromSite2, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+        {playClip}, {site2NoCohortsClip},                   //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite2, timerPop}},                               //   Next state(s)
 
     {arriveSite3,                                           // State
-        {setLoop}, {site3NoCohortsLoop},                    //   Action(s) Clip(s)
-        {awayFromSite3, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+        {playClip}, {site3NoCohortsClip},                   //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite3, timerPop}},                               //   Next state(s)
 
     {arriveSite4,                                           // State
-        {setLoop}, {site4NoCohortsLoop},                    //   Action(s) Clip(s)
-        {awayFromSite4, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+        {playClip}, {site4NoCohortsClip},                   //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite4, timerPop}},                               //   Next state(s)
 
     {arriveSite5,                                           // State
-        {setLoop}, {site5NoCohortsLoop},                    //   Action(s) Clip(s)
-        {awayFromSite5, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+        {playClip}, {site5NoCohortsClip},                   //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite5, timerPop}},                               //   Next state(s)
 
     {outAtSite1,                                            // State
         {playClip}, {outAtSite1Clip},                       //   Action(s) Clip(s)

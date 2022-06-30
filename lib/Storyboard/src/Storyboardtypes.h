@@ -58,7 +58,7 @@ enum sb_actid_t : uint8_t  {nullAction, setLoop,  playClip, prepareNew, disableC
 // The storyboard clip values
 enum sb_clipid_t : uint8_t {noClip,             divingLoop,         restingLoop,        abandonedClip, 
                             fullSite1Loop,      fullSite2Loop,      fullSite3Loop,      fullSite4Loop,      fullSite5Loop,
-                            site1NoCohortsLoop, site2NoCohortsLoop, site3NoCohortsLoop, site4NoCohortsLoop, site5NoCohortsLoop,
+                            site1NoCohortsClip, site2NoCohortsClip, site3NoCohortsClip, site4NoCohortsClip, site5NoCohortsClip,
                             openSite1Loop,      openSite2Loop,      openSite3Loop,      openSite4Loop,      openSite5Loop,
                             fillSite1Clip,      fillSite2Clip,      fillSite3Clip,      fillSite4Clip,      fillSite5Clip,
                             atSite1Loop,        atSite2Loop,        atSite3Loop,        atSite4Loop,        atSite5Loop,
