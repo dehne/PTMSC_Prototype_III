@@ -57,7 +57,7 @@ struct sb_site_t {                                          // A description of 
 };
                                                             // The location of the sites in the flying space (mm)
 const sb_state_t sbState[] = {
-    {diving,                                                        // State
+    {diving,                                                        // State 0
         {setLoop}, {divingLoop},                                    //   Action(s) Clip(s)
         {nearOpenSite1Cohorts, nearOpenSite2Cohorts, nearOpenSite3Cohorts, nearOpenSite4Cohorts, nearOpenSite5Cohorts,
          nearFullSite1Cohorts, nearFullSite1Cohorts, nearFullSite3Cohorts, nearFullSite4Cohorts, nearFullSite5Cohorts,
@@ -68,192 +68,222 @@ const sb_state_t sbState[] = {
          arriveSite1,          arriveSite2,          arriveSite3,          arriveSite4,          arriveSite5, 
          arriveBoatA,          arriveboatB,          timerPop}},    //   Next state(s)
 
-    {resting,                                               // State
+    {resting,                                               // State 1
         {setLoop, prepareNew}, {restingLoop},               //   Action(s) Clip(s)
         {touchJoystick},                                    //   Trigger(s)
         {instruct}},                                        //   Next state(s)
         
-    {timerPop,                                              // State
+    {timerPop,                                              // State 2
         {disableControls}, {noClip},                        //   Action(s) Clip(s)
         {always},                                           //   Trigger(s)
         {abandoned}},                                       //   Next state(s)
         
-    {powerUp,                                               // State
+    {powerUp,                                               // State 3
         {setLoop}, {calibrateLoop},                         //   Action(s) Clip(s)
         {calibrated},                                       //   Trigger(s)
         {resting}},                                         //   Next state(s)
         
-    {abandoned,                                             // State
+    {abandoned,                                             // State 4
         {playClip, setLoop}, {abandonedClip, restingLoop},  //   Action(s) Clip(s)
         {videoEnds},                                        //   Trigger(s)
         {resting}},                                         //   Next state(s)
 
-    {arriveFullSite1,                                       // State
-        {setLoop}, {fullSite1Loop},                         //   Action(s) Clip(s)
-        {awayFromSite1, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+    {arriveFullSite1,                                       // State 5
+        {playClip}, {fullSite1Clip},                        //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite1, timerPop}},                               //   Next state(s)
 
-    {arriveFullSite2,                                       // State
-        {setLoop}, {fullSite2Loop},                         //   Action(s) Clip(s)
-        {awayFromSite2, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+    {arriveFullSite2,                                       // State 6
+        {playClip}, {fullSite2Clip},                        //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite2, timerPop}},                               //   Next state(s)
 
-    {arriveFullSite3,                                       // State
-        {setLoop}, {fullSite3Loop},                         //   Action(s) Clip(s)
-        {awayFromSite3, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+    {arriveFullSite3,                                       // State 7
+        {playClip}, {fullSite3Clip},                        //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite3, timerPop}},                               //   Next state(s)
 
-    {arriveFullSite4,                                       // State
-        {setLoop}, {fullSite4Loop},                         //   Action(s) Clip(s)
-        {awayFromSite4, asynchTimer},                       //   Trigger(s)
-        {diving, abandoned}},                               //   Next state(s)
+    {arriveFullSite4,                                       // State 8
+        {playClip}, {fullSite4Clip},                        //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite4, abandoned}},                              //   Next state(s)
 
-    {arriveFullSite5,                                       // State
-        {setLoop}, {fullSite5Loop},                         //   Action(s) Clip(s)
-        {awayFromSite5, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
+    {arriveFullSite5,                                       // State 9
+        {playClip}, {fullSite5Clip},                        //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atSite5, timerPop}},                               //   Next state(s)
 
-    {arriveOpenSite1,                                       // State
-        {setLoop}, {openSite1Loop},                         //   Action(s) Clip(s)
-        {awayFromSite1, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite1, timerPop}},                     //   Next state(s)
+    {arriveOpenSite1,                                       // State 10
+        {playClip}, {openSite1Clip},                        //   Action(s) Clip(s)
+        {videoEnds, pressPlaceButton, asynchTimer},         //   Trigger(s)
+        {atOpenSite1, fillSite1, timerPop}},                //   Next state(s)
 
-    {arriveOpenSite2,                                       // State
-        {setLoop}, {openSite2Loop},                         //   Action(s) Clip(s)
-        {awayFromSite2, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite2, timerPop}},                     //   Next state(s)
+    {arriveOpenSite2,                                       // State 11
+        {playClip}, {openSite2Clip},                        //   Action(s) Clip(s)
+        {videoEnds, pressPlaceButton, asynchTimer},         //   Trigger(s)
+        {atOpenSite2, fillSite2, timerPop}},                //   Next state(s)
 
-    {arriveOpenSite3,                                       // State
-        {setLoop}, {openSite3Loop},                         //   Action(s) Clip(s)
-        {awayFromSite3, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite3, timerPop}},                     //   Next state(s)
+    {arriveOpenSite3,                                       // State 12
+        {playClip}, {openSite3Clip},                        //   Action(s) Clip(s)
+        {videoEnds, pressPlaceButton, asynchTimer},         //   Trigger(s)
+        {atOpenSite3, fillSite3, timerPop}},                //   Next state(s)
 
-    {arriveOpenSite4,                                       // State
-        {setLoop}, {openSite4Loop},                         //   Action(s) Clip(s)
-        {awayFromSite4, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite4, abandoned}},                    //   Next state(s)
+    {arriveOpenSite4,                                       // State 13
+        {playClip}, {openSite4Clip},                        //   Action(s) Clip(s)
+        {videoEnds, pressPlaceButton, asynchTimer},         //   Trigger(s)
+        {atOpenSite4, fillSite4, timerPop}},                //   Next state(s)
 
-    {arriveOpenSite5,                                       // State
-        {setLoop}, {openSite5Loop},                         //   Action(s) Clip(s)
-        {awayFromSite5, pressPlaceButton, asynchTimer},     //   Trigger(s)
-        {diving, fillSite5, timerPop}},                     //   Next state(s)
+    {arriveOpenSite5,                                       // State 14
+        {playClip}, {openSite5Clip},                        //   Action(s) Clip(s)
+        {videoEnds, pressPlaceButton, asynchTimer},         //   Trigger(s)
+        {atOpenSite5, fillSite5, timerPop}},                //   Next state(s)
 
-    {fillSite1,                                             // State
-        {playClip, deposit1}, {fillSite1Clip},              //   Action(s) Clip(s)
-        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite1, outAtSite1, timerPop}},                   //   Next state(s)
-
-    {fillSite2,                                             // State
-        {playClip, deposit2}, {fillSite2Clip},              //   Action(s) Clip(s)
-        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite2, outAtSite2, timerPop}},                   //   Next state(s)
-
-    {fillSite3,                                             // State
-        {playClip, deposit3}, {fillSite3Clip},              //   Action(s) Clip(s)
-        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite3, outAtSite3, timerPop}},                   //   Next state(s)
-
-    {fillSite4,                                             // State
-        {playClip, deposit4}, {fillSite4Clip},              //   Action(s) Clip(s)
-        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite4, outAtSite4, timerPop}},                   //   Next state(s)
-
-    {fillSite5,                                             // State
-        {playClip, deposit5}, {fillSite5Clip},              //   Action(s) Clip(s)
-        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
-        {atSite5, outAtSite5, timerPop}},                   //   Next state(s)
-
-    {atSite1,                                               // State
-        {setLoop}, {atSite1Loop},                           //   Action(s) Clip(s)
-        {awayFromSite1, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-
-    {atSite2,                                               // State
-        {setLoop}, {atSite2Loop},                           //   Action(s) Clip(s)
-        {awayFromSite2, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-
-    {atSite3,                                               // State
-        {setLoop}, {atSite3Loop},                           //   Action(s) Clip(s)
-        {awayFromSite3, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-
-    {atSite4,                                               // State
-        {setLoop}, {atSite4Loop},                           //   Action(s) Clip(s)
-        {awayFromSite4, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-
-    {atSite5,                                               // State
-        {setLoop}, {atSite5Loop},                           //   Action(s) Clip(s)
-        {awayFromSite5, asynchTimer},                       //   Trigger(s)
-        {diving, timerPop}},                                //   Next state(s)
-
-    {arriveSite1,                                           // State
+    {arriveSite1,                                           // State 15
         {playClip}, {site1NoCohortsClip},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite1, timerPop}},                               //   Next state(s)
 
-    {arriveSite2,                                           // State
+    {arriveSite2,                                           // State 16
         {playClip}, {site2NoCohortsClip},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite2, timerPop}},                               //   Next state(s)
 
-    {arriveSite3,                                           // State
+    {arriveSite3,                                           // State 17
         {playClip}, {site3NoCohortsClip},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite3, timerPop}},                               //   Next state(s)
 
-    {arriveSite4,                                           // State
+    {arriveSite4,                                           // State 18
         {playClip}, {site4NoCohortsClip},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite4, timerPop}},                               //   Next state(s)
 
-    {arriveSite5,                                           // State
+    {arriveSite5,                                           // State 19
         {playClip}, {site5NoCohortsClip},                   //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite5, timerPop}},                               //   Next state(s)
 
-    {outAtSite1,                                            // State
+    {fillSite1,                                             // State 20
+        {playClip, deposit1}, {fillSite1Clip},              //   Action(s) Clip(s)
+        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
+        {atSite1, outAtSite1, timerPop}},                   //   Next state(s)
+
+    {fillSite2,                                             // State 21
+        {playClip, deposit2}, {fillSite2Clip},              //   Action(s) Clip(s)
+        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
+        {atSite2, outAtSite2, timerPop}},                   //   Next state(s)
+
+    {fillSite3,                                             // State 22
+        {playClip, deposit3}, {fillSite3Clip},              //   Action(s) Clip(s)
+        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
+        {atSite3, outAtSite3, timerPop}},                   //   Next state(s)
+
+    {fillSite4,                                             // State 23
+        {playClip, deposit4}, {fillSite4Clip},              //   Action(s) Clip(s)
+        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
+        {atSite4, outAtSite4, timerPop}},                   //   Next state(s)
+
+    {fillSite5,                                             // State 24
+        {playClip, deposit5}, {fillSite5Clip},              //   Action(s) Clip(s)
+        {videoEndsCohorts, videoEndsNoCohorts, asynchTimer},//   Trigger(s)
+        {atSite5, outAtSite5, timerPop}},                   //   Next state(s)
+
+    {outAtSite1,                                            // State 25
         {playClip}, {outAtSite1Clip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite1, timerPop}},                               //   Next state(s)
         
-    {outAtSite2,                                            // State
+    {outAtSite2,                                            // State 26
         {playClip}, {outAtSite2Clip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite2, timerPop}},                               //   Next state(s)
         
-    {outAtSite3,                                            // State
+    {outAtSite3,                                            // State 27
         {playClip}, {outAtSite3Clip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite3, timerPop}},                               //   Next state(s)
         
-    {outAtSite4,                                            // State
+    {outAtSite4,                                            // State 28
         {playClip}, {outAtSite4Clip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite4, timerPop}},                               //   Next state(s)
         
-    {outAtSite5,                                            // State
+    {outAtSite5,                                            // State 29
         {playClip}, {outAtSite5Clip},                       //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atSite5, timerPop}},                               //   Next state(s)
         
-    {arriveBoatA,                                           // State
-        {setLoop}, {boatCohortsLoop},                       //   Action(s) Clip(s)
+    {atSite1,                                               // State 30
+        {setLoop}, {atSite1Loop},                           //   Action(s) Clip(s)
+        {awayFromSite1, asynchTimer},                       //   Trigger(s)
+        {diving, timerPop}},                                //   Next state(s)
+
+    {atSite2,                                               // State 31
+        {setLoop}, {atSite2Loop},                           //   Action(s) Clip(s)
+        {awayFromSite2, asynchTimer},                       //   Trigger(s)
+        {diving, timerPop}},                                //   Next state(s)
+
+    {atSite3,                                               // State 32
+        {setLoop}, {atSite3Loop},                           //   Action(s) Clip(s)
+        {awayFromSite3, asynchTimer},                       //   Trigger(s)
+        {diving, timerPop}},                                //   Next state(s)
+
+    {atSite4,                                               // State 33
+        {setLoop}, {atSite4Loop},                           //   Action(s) Clip(s)
+        {awayFromSite4, asynchTimer},                       //   Trigger(s)
+        {diving, timerPop}},                                //   Next state(s)
+
+    {atSite5,                                               // State 34
+        {setLoop}, {atSite5Loop},                           //   Action(s) Clip(s)
+        {awayFromSite5, asynchTimer},                       //   Trigger(s)
+        {diving, timerPop}},                                //   Next state(s)
+
+    {atOpenSite1,                                           // State 35
+        {setLoop}, {atSite1Loop},                           //   Action(s) Clip(s)
+        {awayFromSite1, pressPlaceButton, asynchTimer},     //   Trigger(s)
+        {diving, fillSite1, timerPop}},                     //   Next state(s)
+
+    {atOpenSite2,                                           // State 36
+        {setLoop}, {atSite2Loop},                           //   Action(s) Clip(s)
+        {awayFromSite2, pressPlaceButton, asynchTimer},     //   Trigger(s)
+        {diving, fillSite2, timerPop}},                     //   Next state(s)
+
+    {atOpenSite3,                                           // State 37
+        {setLoop}, {atSite3Loop},                           //   Action(s) Clip(s)
+        {awayFromSite3, pressPlaceButton, asynchTimer},     //   Trigger(s)
+        {diving, fillSite3, timerPop}},                     //   Next state(s)
+
+    {atOpenSite4,                                           // State 38
+        {setLoop}, {atSite4Loop},                           //   Action(s) Clip(s)
+        {awayFromSite4, pressPlaceButton, asynchTimer},     //   Trigger(s)
+        {diving, fillSite4, timerPop}},                     //   Next state(s)
+
+    {atOpenSite5,                                           // State 39
+        {setLoop}, {atSite5Loop},                           //   Action(s) Clip(s)
+        {awayFromSite5, pressPlaceButton, asynchTimer},     //   Trigger(s)
+        {diving, fillSite5, timerPop}},                     //   Next state(s)
+
+    {arriveBoatA,                                           // State 40
+        {playClip}, {boatCohortsClip},                      //   Action(s) Clip(s)
+        {videoEnds, asynchTimer},                           //   Trigger(s)
+        {atBoatA, timerPop}},                               //   Next state(s)
+
+    {atBoatA,                                               // State 41
+        {setLoop}, {atBoatLoop},                            //   Action(s) Clip(s)
         {awayFromBoat, asynchTimer},                        //   Trigger(s)
         {diving, timerPop}},                                //   Next state(s)
 
-    {arriveboatB,                                           // State
+    {arriveboatB,                                           // State 42
         {playClip, disableControls}, {transitionClip},      //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atBoatB, timerPop}},                               //   Next state(s)
 
-    {atBoatB,                                               // State
-        {survival}, {noClip},                               //   Action(s) Clip(s)
-        {sequenceFinished},                                 //   Trigger(s)
+    {atBoatB,                                               // State 43
+        {playClip}, {GameOverClip},                         //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
         {resting}},                                         //   Next state(s)
 
-    {instruct,                                              // State
+    {instruct,                                              // State 44
         {setLoop}, {instructLoop},                          //   Action(s) Clip(s)
         {awayFromBoat},                                     //   Trigger(s)
         {diving}}                                           //   Next state(s)

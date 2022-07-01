@@ -649,11 +649,6 @@ bool onPressPlaceButtonTrigger(sb_stateid_t s, sb_trigid_t t) {
   return console.placeLedIsOn();
 }
 
-// sequence finished trigger handler
-bool onSequenceFinished(sb_stateid_t s, sb_trigid_t t) {
-  return true;    // Stub
-}
-
 // calibrated trigger handler
 bool onCalibratedTrigger(sb_stateid_t s, sb_trigid_t t) {
   return diver.isCalibrated();
@@ -807,7 +802,6 @@ void setup() {
   sb->attachTriggerHandler(nearBoatNoCohorts, onNearBoatNoCohortsTrigger);
   sb->attachTriggerHandler(awayFromBoat, onAwayFromBoatTrigger);
   sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
-  sb->attachTriggerHandler(sequenceFinished, onSequenceFinished);
   sb->attachTriggerHandler(calibrated, onCalibratedTrigger);
 
   // Initialize the Storyboard action handlers
