@@ -66,55 +66,55 @@
 #include "Console.h"
 #include "Storyboard.h"
 
-#define DEBUG                       // Uncomment to turn on debugging messages
-//#define VERBOSE                     // Uncomment for even more debugging messages
+#define DEBUG                         // Uncomment to turn on debugging messages
+//#define VERBOSE                       // Uncomment for even more debugging messages
 
 // For the stepper motors
-#define PIN_0D        (4)           // Motor driver 0 (x = 0, y = 0 winch) direction pin
-#define PIN_0P        (5)           //   pulse pin 0
-#define PIN_1D        (6)           // Motor driver 1 (x = SIZE_X, y = 0 winch) direction pin
-#define PIN_1P        (7)           //   pulse pin 1
-#define PIN_2D        (9)           // Motor driver 2 (x = 0, y = SIZE_Y winch) direction pin
-#define PIN_2P        (10)          //   pulse pin 2
-#define PIN_3D        (11)          // Motor driver 3 (x = SIZE-X, y = SIZE_Y winch) direction pin
-#define PIN_3P        (12)          //   pulse pin 3
-#define PIN_EN        (13)          // Enable pin - common to all motor drivers (active LOW)
-#define MAX_SPEED     (800)         // In steps per second
+#define PIN_0D        (4)             // Motor driver 0 (x = 0, y = 0 winch) direction pin
+#define PIN_0P        (5)             //   pulse pin 0
+#define PIN_1D        (6)             // Motor driver 1 (x = SIZE_X, y = 0 winch) direction pin
+#define PIN_1P        (7)             //   pulse pin 1
+#define PIN_2D        (9)             // Motor driver 2 (x = 0, y = SIZE_Y winch) direction pin
+#define PIN_2P        (10)            //   pulse pin 2
+#define PIN_3D        (11)            // Motor driver 3 (x = SIZE-X, y = SIZE_Y winch) direction pin
+#define PIN_3P        (12)            //   pulse pin 3
+#define PIN_EN        (13)            // Enable pin - common to all motor drivers (active LOW)
+#define MAX_SPEED     (800)           // In steps per second
 
 // For communicating with the calReader and diver Arduino Nanos
-#define CAL_CLK_PIN   (2)           // The pin from which the calReader clock signal comes
-#define CAL_DATA_PIN  (3)           // The pin from which the calReader data signal comes
-#define DVR_CLK_PIN   (39)          // Pin to which the diver's clock signal goes
-#define DVR_DATA_PIN  (38)          // Pin to which the diver's data goes
+#define CAL_CLK_PIN   (2)             // The pin from which the calReader clock signal comes
+#define CAL_DATA_PIN  (3)             // The pin from which the calReader data signal comes
+#define DVR_CLK_PIN   (39)            // Pin to which the diver's clock signal goes
+#define DVR_DATA_PIN  (38)            // Pin to which the diver's data goes
 
 // For the cohort count LEDs
-#define COHORT1_PIN   (23)          // Pin to which LED indicating 1 cohort remaining is attached
-#define COHORT2_PIN   (25)          // Pin to which LED indicating 2 cohorts remaining is attached
-#define COHORT3_PIN   (27)          // Pin to which LED indicating 3 cohorts remaining is attached
+#define COHORT1_PIN   (23)            // Pin to which LED indicating 1 cohort remaining is attached
+#define COHORT2_PIN   (25)            // Pin to which LED indicating 2 cohorts remaining is attached
+#define COHORT3_PIN   (27)            // Pin to which LED indicating 3 cohorts remaining is attached
 
 // Debugging LED
 #ifdef DEBUG
-#define DEBUG_LED     (A5)          // We have a green LED attached to this pin for debugging
+#define DEBUG_LED     (A5)            // We have a green LED attached to this pin for debugging
 #endif
 
 // Physical size of flying space (mm) measured from floor and between hoist points
-#define SIZE_X        (945)
-#define SIZE_Y        (550)
+#define SIZE_X        (950)
+#define SIZE_Y        (557)
 #define SIZE_Z        (777)
-#define DIVER_HANG    (330)           // How much (mm) the diver hangs below the suspension point
+#define DIVER_HANG    (330)             // How much (mm) the diver hangs below the suspension point
 
 // Safety margins (mm) for left, right, front, back, down and up
-#define MARGIN_L      (30)
-#define MARGIN_R      (30)
-#define MARGIN_F      (25)
-#define MARGIN_B      (25)
-#define MARGIN_D      (DIVER_HANG + 5)// Big 'cause the diver hangs down from the suspension point
-#define MARGIN_U      (80)            // The cables get pretty tight around this height
+#define MARGIN_L      (130)             // Diver's flippers about this far from lift point
+#define MARGIN_R      (130)
+#define MARGIN_F      (130)
+#define MARGIN_B      (130)
+#define MARGIN_D      (DIVER_HANG + 15) // Diver can come within 15mm of bottom
+#define MARGIN_U      (130)             // Don't want to go above home height by much at all
 
-// Home location (mm)
-#define HOME_X        (445)
-#define HOME_Y        (290)
-#define HOME_Z        (565)
+// Home location (mm) as measured directly after calibration
+#define HOME_X        (471)
+#define HOME_Y        (280)
+#define HOME_Z        (643)
 
 // Rest location relative to home (mm)
 #define REST_DELTA_X  (0)
