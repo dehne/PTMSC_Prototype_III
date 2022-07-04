@@ -32,7 +32,7 @@
  ****/
 #pragma once
 // The storyboard state values and SB_N_STATES, the number of states in the storyboard
-enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned, 
+enum sb_stateid_t : uint8_t {diving,         resting,         timerPop,        powerUp,         abandoned, 
                             arriveFullSite1, arriveFullSite2, arriveFullSite3, arriveFullSite4, arriveFullSite5,
                             arriveOpenSite1, arriveOpenSite2, arriveOpenSite3, arriveOpenSite4, arriveOpenSite5,
                             arriveSite1,     arriveSite2,     arriveSite3,     arriveSite4,     arriveSite5,
@@ -40,7 +40,9 @@ enum sb_stateid_t : uint8_t {diving, resting, timerPop, powerUp, abandoned,
                             outAtSite1,      outAtSite2,      outAtSite3,      outAtSite4,      outAtSite5,
                             atSite1,         atSite2,         atSite3,         atSite4,         atSite5,
                             atOpenSite1,     atOpenSite2,     atOpenSite3,     atOpenSite4,     atOpenSite5,
-                            arriveBoatA,     atBoatA,         arriveboatB,     atBoatB,         instruct,
+                            resultSite1,     resultSite2,     resultSite3,     resultSite4,     resultSite5,
+                            arriveBoatA,     atBoatA,         arriveboatB,     rvwIntro,        chooseSumry,
+                            super,           good,            meh,             instruct,
                             SB_N_STATES};
 
 // The storyboard trigger values and SB_N_TRIGS, the number of triggers in the storyboard
@@ -49,26 +51,27 @@ enum sb_trigid_t : uint8_t {nullTrigger,         always,                asynchTi
                             nearFullSite1Cohorts, nearFullSite2Cohorts, nearFullSite3Cohorts, nearFullSite4Cohorts, nearFullSite5Cohorts,
                             nearSite1NoCohorts,   nearSite2NoCohorts,   nearSite3NoCohorts,   nearSite4NoCohorts,   nearSite5NoCohorts,
                             awayFromSite1,        awayFromSite2,        awayFromSite3,        awayFromSite4,        awayFromSite5,
-                            videoEndsCohorts,     videoEndsNoCohorts,   nearBoatCohorts,      nearBoatNoCohorts,    awayFromBoat, pressPlaceButton, 
-                            sequenceFinished,     calibrated,
+                            videoEndsCohorts,     videoEndsNoCohorts,   nearBoatCohorts,      nearBoatNoCohorts,    awayFromBoat, 
+                            pressPlaceButton,     calibrated,           superScore,           goodScore,            mehScore,
                             SB_N_TRIGS};
 
 // The storyboard action values
-enum sb_actid_t : uint8_t  {nullAction, setLoop,  playClip, prepareNew, disableControls, 
-                            deposit1,   deposit2, deposit3, deposit4, deposit5,
-                            survival,
+enum sb_actid_t : uint8_t  {nullAction,     setLoop,    playClip,   prepareNew,     disableControls, 
+                            deposit1,       deposit2,   deposit3,   deposit4,       deposit5,
+                            maybePlayClip,
                             SB_N_ACTS};
 
 // The storyboard clip values
-enum sb_clipid_t : uint8_t {noClip,             divingLoop,         restingLoop,        abandonedClip, 
+enum sb_clipid_t : uint8_t {noClip,             divingLoop,         restingLoop,        abandonedClip,      instructLoop,
                             fullSite1Clip,      fullSite2Clip,      fullSite3Clip,      fullSite4Clip,      fullSite5Clip,
                             site1NoCohortsClip, site2NoCohortsClip, site3NoCohortsClip, site4NoCohortsClip, site5NoCohortsClip,
                             openSite1Clip,      openSite2Clip,      openSite3Clip,      openSite4Clip,      openSite5Clip,
                             fillSite1Clip,      fillSite2Clip,      fillSite3Clip,      fillSite4Clip,      fillSite5Clip,
                             atSite1Loop,        atSite2Loop,        atSite3Loop,        atSite4Loop,        atSite5Loop,
                             outAtSite1Clip,     outAtSite2Clip,     outAtSite3Clip,     outAtSite4Clip,     outAtSite5Clip,
-                            boatCohortsClip,    atBoatLoop,         transitionClip,     calibrateLoop,      instructLoop,
-                            GameOverClip,
+                            reviewSite1Clip,    reviewSite2Clip,    reviewSite3Clip,    reviewSite4Clip,    reviewSite5Clip,
+                            boatCohortsClip,    atBoatLoop,         transitionClip,     calibrateLoop,      reviewIntroClip,
+                            superScoreClip,     goodScoreClip,      mehScoreClip,
                             SB_N_CLIPS};
 
 // The type an "action handler" -- a function invoked to carry out a specific action -- must have. The id of the state which 

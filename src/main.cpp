@@ -654,11 +654,42 @@ bool onCalibratedTrigger(sb_stateid_t s, sb_trigid_t t) {
   return diver.isCalibrated();
 }
 
+// convenience function for score trigger handlers 0 ==> meh, 1 ==> good, 2 ==> super
+uint8_t getScore() {
+  uint8_t answer = sb_site[0].isFull ? 3 : 0;
+  answer += sb_site[1].isFull ? 3 : 0;
+  answer += sb_site[2].isFull ? 1 : 0;
+  answer += sb_site[3].isFull ? 4 : 0;
+  answer += sb_site[4].isFull ? 4 : 0;
+  answer = answer > 10 ? 2 : answer > 9 ? 1 : 0;
+  return answer; 
+}
+
+// superScore trigger handler
+bool onSuperScoreTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return getScore() == 2;
+}
+
+// goodScore trigger handler
+bool onGoodScoreTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return getScore() == 1;
+}
+
+// mehScore trigger handler
+bool onMehScoreTrigger(sb_stateid_t s, sb_trigid_t t) {
+  return getScore() == 0;
+}
+
 /**
  * 
  * Storyboard action handlers
  * 
  */
+// null action handler
+void onNullAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  return;
+}
+
 // setLoop action handler
 void onSetLoopAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
   Serial.print(F("!setLoop "));
@@ -669,6 +700,24 @@ void onSetLoopAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clip
 void onPlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
   Serial.print(F("!playClip "));
   Serial.println(clipId);
+}
+
+// maybePlayClip action handler
+void onMaybePlayClipAction(sb_stateid_t stateId, sb_actid_t actionId, sb_clipid_t clipId) {
+  uint8_t siteIx = stateId - (uint8_t)resultSite1;
+  #ifdef DEBUG
+  if (siteIx > SB_SITE_COUNT) {
+    Serial.print(F("Ignored maybePlayClipAction with invalid site index: "));
+    Serial.print(siteIx);
+    Serial.print(F(" from state "));
+    Serial.println(stateId);
+  } else 
+  #endif
+  if (sb_site[siteIx].isFull) {
+    onPlayClipAction(stateId, actionId, clipId);  // Play clip if the corresponding site is full
+  } else {
+    videoHasEnded = true;                         // Otherwise just pretend we played it
+  }
 }
 
 // prepareNew action handler
@@ -803,8 +852,12 @@ void setup() {
   sb->attachTriggerHandler(awayFromBoat, onAwayFromBoatTrigger);
   sb->attachTriggerHandler(pressPlaceButton, onPressPlaceButtonTrigger);
   sb->attachTriggerHandler(calibrated, onCalibratedTrigger);
+  sb->attachTriggerHandler(superScore, onSuperScoreTrigger);
+  sb->attachTriggerHandler(goodScore, onGoodScoreTrigger);
+  sb->attachTriggerHandler(mehScore, onMehScoreTrigger);
 
   // Initialize the Storyboard action handlers
+  sb->attachActionHandler(nullAction, onNullAction);
   sb->attachActionHandler(setLoop, onSetLoopAction);
   sb->attachActionHandler(playClip, onPlayClipAction);
   sb->attachActionHandler(prepareNew, onPrepareNewAction);
@@ -814,7 +867,7 @@ void setup() {
   sb->attachActionHandler(deposit3, onDepositAction);
   sb->attachActionHandler(deposit4, onDepositAction);
   sb->attachActionHandler(deposit5, onDepositAction);
-  sb->attachActionHandler(survival, onDoSurvivalSequence);
+  sb->attachActionHandler(maybePlayClip, onMaybePlayClipAction);
 
   sb->begin();  //Start the state machine running
 

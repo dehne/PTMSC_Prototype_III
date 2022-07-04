@@ -263,27 +263,72 @@ const sb_state_t sbState[] = {
         {awayFromSite5, pressPlaceButton, asynchTimer},     //   Trigger(s)
         {diving, fillSite5, timerPop}},                     //   Next state(s)
 
-    {arriveBoatA,                                           // State 40
+    {resultSite1,                                           // State 40
+        {maybePlayClip}, {reviewSite1Clip},                 //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resultSite2}},                                     //   Next state(s)
+
+    {resultSite2,                                           // State 41
+        {maybePlayClip}, {reviewSite2Clip},                 //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resultSite3}},                                     //   Next state(s)
+
+    {resultSite3,                                           // State 42
+        {maybePlayClip}, {reviewSite3Clip},                 //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resultSite4}},                                     //   Next state(s)
+
+    {resultSite4,                                           // State 43
+        {maybePlayClip}, {reviewSite4Clip},                 //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resultSite5}},                                     //   Next state(s)
+
+    {resultSite5,                                           // State 44
+        {maybePlayClip}, {reviewSite5Clip},                 //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {chooseSumry}},                                     //   Next state(s)
+
+    {arriveBoatA,                                           // State 45
         {playClip}, {boatCohortsClip},                      //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
         {atBoatA, timerPop}},                               //   Next state(s)
 
-    {atBoatA,                                               // State 41
+    {atBoatA,                                               // State 46
         {setLoop}, {atBoatLoop},                            //   Action(s) Clip(s)
         {awayFromBoat, asynchTimer},                        //   Trigger(s)
         {diving, timerPop}},                                //   Next state(s)
 
-    {arriveboatB,                                           // State 42
+    {arriveboatB,                                           // State 47
         {playClip, disableControls}, {transitionClip},      //   Action(s) Clip(s)
         {videoEnds, asynchTimer},                           //   Trigger(s)
-        {atBoatB, timerPop}},                               //   Next state(s)
+        {rvwIntro, timerPop}},                              //   Next state(s)
 
-    {atBoatB,                                               // State 43
-        {playClip}, {GameOverClip},                         //   Action(s) Clip(s)
+    {rvwIntro,                                              // State 48
+        {playClip}, {reviewIntroClip},                      //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resultSite1}},                                     //   Next state(s)
+
+    {chooseSumry,                                           // State 49
+        {nullAction}, {noClip},                             //   Action(s) Clip(s)
+        {superScore, goodScore, mehScore},                  //   Trigger(s)
+        {super, good, meh}},                                //   Next state(s)
+
+    {super,                                                 // State 50
+        {playClip}, {superScoreClip},                       //   Action(s) Clip(s)
         {videoEnds},                                        //   Trigger(s)
         {resting}},                                         //   Next state(s)
 
-    {instruct,                                              // State 44
+    {good,                                                  // State 51
+        {playClip}, {goodScoreClip},                        //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resting}},                                         //   Next state(s)
+
+    {meh,                                                   // State 52
+        {playClip}, {mehScoreClip},                         //   Action(s) Clip(s)
+        {videoEnds},                                        //   Trigger(s)
+        {resting}},                                         //   Next state(s)
+
+    {instruct,                                              // State 53
         {setLoop}, {instructLoop},                          //   Action(s) Clip(s)
         {awayFromBoat},                                     //   Trigger(s)
         {diving}}                                           //   Next state(s)
