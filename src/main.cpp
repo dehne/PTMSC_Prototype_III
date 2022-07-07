@@ -68,6 +68,7 @@
 
 #define DEBUG                         // Uncomment to turn on debugging messages
 //#define VERBOSE                       // Uncomment for even more debugging messages
+#define NO_STORY                      // Uncomment to disable storyboard
 
 // For the stepper motors
 #define PIN_0D        (4)             // Motor driver 0 (x = 0, y = 0 winch) direction pin
@@ -869,7 +870,9 @@ void setup() {
   sb->attachActionHandler(deposit5, onDepositAction);
   sb->attachActionHandler(maybePlayClip, onMaybePlayClipAction);
 
+  #ifndef NO_STORY
   sb->begin();  //Start the state machine running
+  #endif
 
   Serial.println(F("Type \"h\" for list of commands."));
 }
@@ -883,5 +886,7 @@ void loop() {
   diver.run();    // Let the diver do its thing
   ui.run();       // Let the UI do its thing
   console.run();  // Let the console do its
+  #ifndef NO_STORY
   sb->run();      // Let the storyboard do its thing
+  #endif
 }
