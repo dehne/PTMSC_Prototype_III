@@ -879,7 +879,7 @@ fp_return_code FlyingPlatform::setCurrentPosition (fp_Point3D tgt) {
     if (tgt.x < marginsMin.x || tgt.y < marginsMin.y || tgt.z < marginsMin.z ||
         tgt.x > marginsMax.x || tgt.y > marginsMax.y || tgt.z > marginsMax.z) {
             #ifdef FP_DEBUG_GEO
-            Serial.print(F("("));
+            Serial.print(F("flyingPlatform::setCurrentPosition out of bounds: ("));
             Serial.print(marginsMax.x);
             Serial.print(F(", "));
             Serial.print(marginsMax.y);
@@ -1072,7 +1072,7 @@ fp_Point3D FlyingPlatform::where() {
     }
     fp_Point3D answer = cbToP3D(cs);
 
-    #ifdef FP_DEBUG_GEO
+    #ifdef FP_DEBUG_GEO_VERBOSE
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
         answer.x > marginsMax.x || answer.y > marginsMax.y || answer.z > marginsMax.z) {
         Serial.print(F("where() called while out of bounds. x: "));
