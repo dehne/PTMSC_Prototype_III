@@ -186,7 +186,7 @@
     #define fp_lengthen(CABLE)     (((CABLE) == 0 || (CABLE) == 3) ? HIGH : LOW)
 
     // True if, while on this heading, x rises with the passage of time. False otheriwse.
-    #define fp_xIsRising(hh)     (hh < FP_N_HHEADINGS / 4 || hh >  3 * (FP_N_HHEADINGS / 4))
+    #define fp_xIsRising(hh)     (hh < FP_N_HHEADINGS / 4 || hh >=  3 * (FP_N_HHEADINGS / 4))
 
     /**
      * 
