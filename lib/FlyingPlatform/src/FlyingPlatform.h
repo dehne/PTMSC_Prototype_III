@@ -572,6 +572,16 @@
              **/
             bool isCalibrated();
 
+            #ifdef FP_DEBUG_GEO
+            /**
+             * 
+             * Returns an fp_Point3D that is the round trip through conversion of 
+             * incoming to a fp_CableBundle and back again to a fp_Point3D
+             * 
+             **/
+            fp_Point3D p3DToP3D(fp_Point3D incoming);
+            #endif
+
         private:
 
             /**

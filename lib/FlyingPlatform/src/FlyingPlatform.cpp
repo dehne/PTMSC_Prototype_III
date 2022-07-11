@@ -785,12 +785,17 @@ bool FlyingPlatform::run() {
             nextCableSteps = p3DToCb(nextPoint);
         } else {                                                // Else it's the last batch; use cable lengths at target
             nextCableSteps = p3DToCb(target);
+            nextPoint = cbToP3D(nextCableSteps);
         }
         t = nextT;
         #ifdef FP_DEBUG_GEO
         if (nextPoint.x < marginsMin.x || nextPoint.y < marginsMin.y || nextPoint.z < marginsMin.z ||
             nextPoint.x > marginsMax.x || nextPoint.y > marginsMax.y || nextPoint.z > marginsMax.z) {
-            Serial.print(F("run() Heading out of bounds: ("));
+            Serial.print(F("run() Heading out of bounds. t: "));
+            Serial.print(t);
+            Serial.print(F(", dt: "));
+            Serial.print(dt);
+            Serial.print(F(", nextPoint: ("));
             Serial.print(nextPoint.x);
             Serial.print(F(", "));
             Serial.print(nextPoint.y);
@@ -1105,6 +1110,12 @@ bool FlyingPlatform::isEnabled() {
 bool FlyingPlatform::isCalibrated() {
     return calibrated;
 }
+
+#ifdef FP_DEBUG_GEO
+fp_Point3D FlyingPlatform::p3DToP3D(fp_Point3D incoming) {
+    return cbToP3D(p3DToCb(incoming));
+}
+#endif
 
 fp_Point3D FlyingPlatform::newTarget() {
     fp_Point3D here;

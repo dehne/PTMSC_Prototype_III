@@ -250,6 +250,10 @@ void onHelp() {
     "  calibrate                Move to the sensor-defined home position.\n"
     "  status                   Print movement status information\n"
     "  where                    Print (z, y, z) location of diver.\n\n"
+    #ifdef FP_DEBUG_GEO
+    "  doTest                   Debugging: Do a test of roundtrip converting\n"
+    "                           3D points to cable bundles and back again.\n\n"
+    #endif
     "Additional 'pseudo commands' as info from the media player\n"
     "  !videoEnd                Indicates the requested video clip ended"));
 }
@@ -341,6 +345,34 @@ void onWhere() {
   Serial.print(stepsToMm(loc.z) - HOME_Z);
   Serial.println(F(") from home"));
 }
+
+#ifdef FP_DEBUG_GEO
+// doTest
+void onDoTest() {
+  fp_Point3D pt;
+  Serial.print(F("inX, inY, inZ, outX, outY, outZ\n"));
+  for (pt.z = 0; pt.z < SIZE_Z; pt.z += 5) {
+    for (pt.y = 0; pt.y < SIZE_Y; pt.y += 5) {
+      for (pt.x = 0; pt.x < SIZE_X; pt.x += 5) {
+        fp_Point3D rt = diver.p3DToP3D(pt);
+        if (pt.x - rt.x != 0 || pt.y - rt.y != 0 || pt.z - rt.z != 0) {
+          Serial.print(pt.x);
+          Serial.print(F(", "));
+          Serial.print(pt.y);
+          Serial.print(F(", "));
+          Serial.print(pt.z);
+          Serial.print(F(", "));
+          Serial.print(rt.x);
+          Serial.print(F(", "));
+          Serial.print(rt.y);
+          Serial.print(F(", "));
+          Serial.println(rt.z);
+        }
+      }
+    }
+  }
+}
+#endif
 
 // !vidEnd pseudo command -- infor from media player that the requested clip has played
 void onPseudoCommandVidEnd() {
@@ -801,6 +833,9 @@ void setup() {
     ui.attachCmdHandler("s", onStop) &&
     ui.attachCmdHandler("status", onStatus) &&
     ui.attachCmdHandler("where", onWhere) &&
+    #ifdef FP_DEBUG_GEO
+    ui.attachCmdHandler("doTest", onDoTest) &&
+    #endif
     ui.attachCmdHandler("!videoEnds", onPseudoCommandVidEnd);
   if (!succeeded) {
     Serial.println(F("Too many command handlers."));
@@ -872,6 +907,8 @@ void setup() {
 
   #ifndef NO_STORY
   sb->begin();  //Start the state machine running
+  #else
+  controlsAreEnabled = true;
   #endif
 
   Serial.println(F("Type \"h\" for list of commands."));
