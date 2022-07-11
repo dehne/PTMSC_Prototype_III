@@ -804,10 +804,9 @@ bool FlyingPlatform::run() {
             Serial.println(F(")"));
         }
         #endif
-        float mostSteps = 0.0;
+        long mostSteps = 0;
         for (byte i = 0; i < 4; i++) {
-            float diff = nextCableSteps.c[i] - startCableSteps.c[i];
-            nextPendingSteps[i] = (long)((diff < 0 ? -0.5 : 0.5) + diff);
+            nextPendingSteps[i] = nextCableSteps.c[i] - startCableSteps.c[i];
             if (nextPendingSteps[i] < 0) {
                 nextPendingSteps[i] = -nextPendingSteps[i];
                 nextShortening[i] = true;
