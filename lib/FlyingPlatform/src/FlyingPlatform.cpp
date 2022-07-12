@@ -729,10 +729,6 @@ bool FlyingPlatform::run() {
         if (newMove) {            
             newMove = false;
             source = where();
-            float moveLength = sqrt(
-                (target.x - source.x) * (target.x - source.x) + 
-                (target.y - source.y) * (target.y - source.y) + 
-                (target.z - source.z) * (target.z - source.z));
             #ifdef FP_DEBUG_GEO
             if (source.x < marginsMin.x || source.y < marginsMin.y || source.z < marginsMin.z ||
                 source.x > marginsMax.x || source.y > marginsMax.y || source.z > marginsMax.z) {
@@ -748,6 +744,10 @@ bool FlyingPlatform::run() {
                 Serial.println(vSlope[vHeading]);
             }
             #endif
+            float moveLength = sqrt(
+                (target.x - source.x) * (target.x - source.x) + 
+                (target.y - source.y) * (target.y - source.y) + 
+                (target.z - source.z) * (target.z - source.z));
             #ifdef FP_DEBUG_RU
             Serial.print(F("run() new move. source: ("));
             Serial.print(source.x);
