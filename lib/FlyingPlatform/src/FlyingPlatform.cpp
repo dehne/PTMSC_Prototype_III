@@ -803,6 +803,24 @@ bool FlyingPlatform::run() {
             Serial.print(nextPoint.z);
             Serial.println(F(")"));
         }
+        // Super temporary -- one test
+        fp_Point3D ncs = cbToP3D(nextCableSteps);
+        fp_Point3D scs = cbToP3D(startCableSteps);
+        if (ncs.z != scs.z) {
+            Serial.print(F("z Changed unexpectedly. scs: ("));
+            Serial.print(scs.x);
+            Serial.print(F(", "));
+            Serial.print(scs.y);
+            Serial.print(F(", "));
+            Serial.print(scs.z);
+            Serial.print(F("), ncs: ("));
+            Serial.print(ncs.x);
+            Serial.print(F(", "));
+            Serial.print(ncs.y);
+            Serial.print(F(", "));
+            Serial.print(ncs.z);
+            Serial.println(F(")"));
+        }
         #endif
         long mostSteps = 0;
         for (byte i = 0; i < 4; i++) {
