@@ -1170,6 +1170,7 @@ fp_Point3D FlyingPlatform::newTarget() {
 
     // Calculate what z is based on vSlope x, here.x, y, here.y and here.z.
     float z = here.z + vSlope[vHeading] * sqrt((x - here.x) * (x - here.x) + (y - here.y) * (y - here.y));
+    // Save x, y, and z so we'll have them at this stage in case assertion fails
     float x0 = x;
     float y0 = y;
     float z0 = z;
@@ -1199,8 +1200,7 @@ fp_Point3D FlyingPlatform::newTarget() {
         return here;
     }
 
-    // Calculate what z is based on vSlope x, here.x, y, here.y and here.z.
-    z = here.z + vSlope[vHeading] * sqrt((x - here.x) * (x - here.x) + (y - here.y) * (y - here.y));
+    // Save x, y and z at this stage so we'll have them in case assertion fails
     float x1 = x;
     float y1 = y;
     float z1 = z;
@@ -1229,22 +1229,12 @@ fp_Point3D FlyingPlatform::newTarget() {
         y =  hSlope[hHeading] * x + by;
     }
 
-    fp_Point3D answer = {(long)(x + 0.5), (long)(y+ 0.5), (long)(z + 0.5)};
+    fp_Point3D answer = {(long)(x + 0.5), (long)(y + 0.5), (long)(z + 0.5)};
 
-    #ifdef FP_DEBUG_NT
-    Serial.print(F("newTarget() result is "));
-    if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
-        answer.x > marginsMax.x || answer.y > marginsMax.y || answer.z > marginsMax.z) {
-        Serial.print(F("out of bounds.\n  tgtType: "));
-    } else {
-        Serial.print(F("ok.\n tgeType: "));
-    }
-    #else
     // Assert: The answer should be inside of the margins
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
         answer.x > marginsMax.x || answer.y > marginsMax.y || answer.z > marginsMax.z) {
         Serial.print(F("Assertion failed in newTarget(): Target is outside the margins.\n  here: ("));
-    #endif
         Serial.print(here.x);
         Serial.print(F(", "));
         Serial.print(here.y);
@@ -1288,12 +1278,10 @@ fp_Point3D FlyingPlatform::newTarget() {
         Serial.print(vSlope[vHeading]);
         Serial.print(F(", by: "));
         Serial.println(by);
-    #ifndef FP_DEBUG_NT
         while (true) {
             // Spin
         }
     }
-    #endif
     return answer;
 }
 
