@@ -743,6 +743,22 @@ bool FlyingPlatform::run() {
                 Serial.print(F(", vSlope: "));
                 Serial.println(vSlope[vHeading]);
             }
+            // Super temporary test
+            if (source.z != target.x) {
+                Serial.print(F("Unexpected change in z while starting new move. source: ("));
+                Serial.print(source.x);
+                Serial.print(F(", "));
+                Serial.print(source.y);
+                Serial.print(F(", "));
+                Serial.print(source.z);
+                Serial.print(F("), target: ("));
+                Serial.print(target.x);
+                Serial.print(F(", "));
+                Serial.print(target.y);
+                Serial.print(F(", "));
+                Serial.print(target.z);
+                Serial.println(F(")."));
+            }
             #endif
             float moveLength = sqrt(
                 (target.x - source.x) * (target.x - source.x) + 
@@ -1230,23 +1246,6 @@ fp_Point3D FlyingPlatform::newTarget() {
     }
 
     fp_Point3D answer = {(long)(x + 0.5), (long)(y + 0.5), (long)(z + 0.5)};
-
-    // Super temporary test
-    if (here.z != answer.z) {
-        Serial.print(F("newTarget(): z changed unexpectedly. here: ("));
-        Serial.print(here.x);
-        Serial.print(F(", "));
-        Serial.print(here.y);
-        Serial.print(F(", "));
-        Serial.print(here.z);
-        Serial.print(F("), answer: ("));
-        Serial.print(answer.x);
-        Serial.print(F(", "));
-        Serial.print(answer.x);
-        Serial.print(F(", "));
-        Serial.print(answer.x);
-        Serial.println(F(")"));
-    }
 
     // Assert: The answer should be inside of the margins
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
