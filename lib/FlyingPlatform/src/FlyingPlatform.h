@@ -589,7 +589,7 @@
              * Based on the starting position -- the position the platform 
              * will occupy when it could next make a change in direction -- 
              * and on hHeading and vHeading, return a fp_Point3D of the 
-             * corresopnding target. 
+             * corresponding target. 
              * 
              * The target is the point where the line from the starting point 
              * and proceeding in the direction described by hHeading and 

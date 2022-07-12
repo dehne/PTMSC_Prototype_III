@@ -1117,16 +1117,24 @@ fp_Point3D FlyingPlatform::p3DToP3D(fp_Point3D incoming) {
 #endif
 
 fp_Point3D FlyingPlatform::newTarget() {
+    #ifdef FP_DEBUG_GEO
+    bool isStopped = true;
+    #endif
     fp_Point3D here;
     if (timerISRHasWork) {
         here = cbToP3D(nextCableSteps); // If we're running, we'll start with next batch
+        #ifdef FP_DEBUG_GEO
+        isStopped = false;
+        #endif
     } else {
         here = where();                 // If we're stopped, we'll start where we are
     }
     #ifdef FP_DEBUG_GEO
     if (here.x < marginsMin.x || here.y < marginsMin.y || here.z < marginsMin.z ||
         here.x > marginsMax.x || here.y > marginsMax.y || here.z > marginsMax.z) {
-        Serial.print(F("newTarget() starting out of bounds.\n  here: ("));
+        Serial.print(F("newTarget() starting out of bounds while "));
+        Serial.print(isStopped ? F("stopped") : F("moving"));
+        Serial.print(F(".\n  here: ("));
         Serial.print(here.x);
         Serial.print(F(", "));
         Serial.print(here.y);
