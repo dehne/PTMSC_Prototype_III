@@ -803,24 +803,6 @@ bool FlyingPlatform::run() {
             Serial.print(nextPoint.z);
             Serial.println(F(")"));
         }
-        // Super temporary -- one test
-        fp_Point3D ncs = cbToP3D(nextCableSteps);
-        fp_Point3D scs = cbToP3D(startCableSteps);
-        if (ncs.z != scs.z) {
-            Serial.print(F("z Changed unexpectedly. scs: ("));
-            Serial.print(scs.x);
-            Serial.print(F(", "));
-            Serial.print(scs.y);
-            Serial.print(F(", "));
-            Serial.print(scs.z);
-            Serial.print(F("), ncs: ("));
-            Serial.print(ncs.x);
-            Serial.print(F(", "));
-            Serial.print(ncs.y);
-            Serial.print(F(", "));
-            Serial.print(ncs.z);
-            Serial.println(F(")"));
-        }
         #endif
         long mostSteps = 0;
         for (byte i = 0; i < 4; i++) {
@@ -1248,6 +1230,23 @@ fp_Point3D FlyingPlatform::newTarget() {
     }
 
     fp_Point3D answer = {(long)(x + 0.5), (long)(y + 0.5), (long)(z + 0.5)};
+
+    // Super temporary test
+    if (here.z != answer.z) {
+        Serial.print(F("newTarget(): z changed unexpectedly. here: ("));
+        Serial.print(here.x);
+        Serial.print(F(", "));
+        Serial.print(here.y);
+        Serial.print(F(", "));
+        Serial.print(here.z);
+        Serial.print(F("), answer: ("));
+        Serial.print(answer.x);
+        Serial.print(F(", "));
+        Serial.print(answer.x);
+        Serial.print(F(", "));
+        Serial.print(answer.x);
+        Serial.println(F(")"));
+    }
 
     // Assert: The answer should be inside of the margins
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
