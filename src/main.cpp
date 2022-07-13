@@ -349,30 +349,27 @@ void onWhere() {
 #ifdef FP_DEBUG_GEO
 // doTest
 void onDoTest() {
-  fp_Point3D src = {SIZE_X - MARGIN_R, ((SIZE_Y - MARGIN_B - MARGIN_F) / 2, SIZE_Z - MARGIN_U)};
-  fp_Point3D tgt = {MARGIN_L, ((SIZE_Y - MARGIN_B - MARGIN_F) / 2, SIZE_Z - MARGIN_U)};
-  fp_CableBundle srcCb = diver.p3DToCb(src);
-  fp_CableBundle tgtCb = diver.p3DToCb(tgt);
-  fp_CableBundle deltaCb;
-  for (uint8_t cable = 0; cable < 4; cable++){
-    deltaCb.c[cable] = tgtCb.c[cable] - srcCb.c[cable];
-  }
-  fp_CableBundle batchCb = srcCb;
+  fp_Point3D src = {mmToSteps(SIZE_X - MARGIN_R), mmToSteps(SIZE_Y / 2), mmToSteps(SIZE_Z - MARGIN_U)};
+  fp_Point3D tgt = {mmToSteps(MARGIN_L), mmToSteps(SIZE_Y / 2), mmToSteps(SIZE_Z - MARGIN_U)};
+  fp_Point3D nextPoint;
+  fp_Point3D batch;
+  fp_CableBundle batchCb;
   Serial.print(F("t, x, y, z\n"));
   float dt = 0.03;
   float t = -dt;
   while (t < 1.0) {
     t = min(t + dt, 1.0);
     Serial.print(t);
-    Serial.print(F(","));
-    for (uint8_t cable = 0; cable < 4; cable++) {
-      batchCb.c[cable] = srcCb.c[cable] + deltaCb.c[cable] * t;
-    }
-    fp_Point3D batch = diver.cbToP3D(batchCb);
+    Serial.print(F(", "));
+    nextPoint.x = src.x + t * (tgt.x - src.x);
+    nextPoint.y = src.y + t * (tgt.y - src.y);
+    nextPoint.z = src.z + t * (tgt.z - src.z);
+    batchCb = diver.p3DToCb(nextPoint);
+    batch = diver.cbToP3D(batchCb);
     Serial.print(batch.x);
-    Serial.print(F("', "));
+    Serial.print(F(", "));
     Serial.print(batch.y);
-    Serial.print(F("', "));
+    Serial.print(F(", "));
     Serial.println(batch.z);
   }
 }
