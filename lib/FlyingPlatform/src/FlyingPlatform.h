@@ -572,24 +572,16 @@
              **/
             bool isCalibrated();
 
-            #ifdef FP_DEBUG_GEO
-            /**
-             * 
-             * Returns an fp_Point3D that is the round trip through conversion of 
-             * incoming to a fp_CableBundle and back again to a fp_Point3D
-             * 
-             **/
-            fp_Point3D p3DToP3D(fp_Point3D incoming);
-            #endif
-
+            #ifndef FP_DEBUG_GEO
         private:
+            #endif
 
             /**
              * 
              * Based on the starting position -- the position the platform 
              * will occupy when it could next make a change in direction -- 
              * and on hHeading and vHeading, return a fp_Point3D of the 
-             * corresponding target. 
+             * corresopnding target. 
              * 
              * The target is the point where the line from the starting point 
              * and proceeding in the direction described by hHeading and 

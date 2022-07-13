@@ -1126,12 +1126,6 @@ bool FlyingPlatform::isCalibrated() {
     return calibrated;
 }
 
-#ifdef FP_DEBUG_GEO
-fp_Point3D FlyingPlatform::p3DToP3D(fp_Point3D incoming) {
-    return cbToP3D(p3DToCb(incoming));
-}
-#endif
-
 fp_Point3D FlyingPlatform::newTarget() {
     #ifdef FP_DEBUG_GEO
     bool isStopped = true;
