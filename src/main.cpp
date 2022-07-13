@@ -366,7 +366,7 @@ void onDoTest() {
     Serial.print(t);
     Serial.print(F(","));
     for (uint8_t cable = 0; cable < 4; cable++) {
-      batchCb.c[cable] = deltaCb.c[cable] * t;
+      batchCb.c[cable] = srcCb.c[cable] + deltaCb.c[cable] * t;
     }
     fp_Point3D batch = diver.cbToP3D(batchCb);
     Serial.print(batch.x);
