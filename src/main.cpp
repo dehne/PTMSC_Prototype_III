@@ -251,8 +251,8 @@ void onHelp() {
     "  status                   Print movement status information\n"
     "  where                    Print (z, y, z) location of diver.\n\n"
     #ifdef FP_DEBUG_GEO
-    "  doTest                   Debugging: Do a test of roundtrip converting\n"
-    "                           3D points to cable bundles and back again.\n\n"
+    "  doTest                   Debugging: Do a test of the current method of\n"
+    "                           batch stepping.\n\n"
     #endif
     "Additional 'pseudo commands' as info from the media player\n"
     "  !videoEnd                Indicates the requested video clip ended"));
@@ -349,27 +349,31 @@ void onWhere() {
 #ifdef FP_DEBUG_GEO
 // doTest
 void onDoTest() {
-  fp_Point3D pt;
-  Serial.print(F("inX, inY, inZ, outX, outY, outZ\n"));
-  for (pt.z = 0; pt.z < SIZE_Z; pt.z += 5) {
-    for (pt.y = 0; pt.y < SIZE_Y; pt.y += 5) {
-      for (pt.x = 0; pt.x < SIZE_X; pt.x += 5) {
-        fp_Point3D rt = diver.p3DToP3D(pt);
-        if (pt.x - rt.x != 0 || pt.y - rt.y != 0 || pt.z - rt.z != 0) {
-          Serial.print(pt.x);
-          Serial.print(F(", "));
-          Serial.print(pt.y);
-          Serial.print(F(", "));
-          Serial.print(pt.z);
-          Serial.print(F(", "));
-          Serial.print(rt.x);
-          Serial.print(F(", "));
-          Serial.print(rt.y);
-          Serial.print(F(", "));
-          Serial.println(rt.z);
-        }
-      }
+  fp_Point3D src = {SIZE_X - MARGIN_R, ((SIZE_Y - MARGIN_B - MARGIN_F) / 2, SIZE_Z - MARGIN_U)};
+  fp_Point3D tgt = {MARGIN_L, ((SIZE_Y - MARGIN_B - MARGIN_F) / 2, SIZE_Z - MARGIN_U)};
+  fp_CableBundle srcCb = diver.p3DToCb(src);
+  fp_CableBundle tgtCb = diver.p3DToCb(tgt);
+  fp_CableBundle deltaCb;
+  for (uint8_t cable = 0; cable < 4; cable++){
+    deltaCb.c[cable] = tgtCb.c[cable] - srcCb.c[cable];
+  }
+  fp_CableBundle batchCb = srcCb;
+  Serial.print(F("t, x, y, z\n"));
+  float dt = 0.03;
+  float t = -dt;
+  while (t < 1.0) {
+    t = min(t + dt, 1.0);
+    Serial.print(t);
+    Serial.print(F(","));
+    for (uint8_t cable = 0; cable < 4; cable++) {
+      batchCb.c[cable] = deltaCb.c[cable] * t;
     }
+    fp_Point3D batch = diver.cbToP3D(batchCb);
+    Serial.print(batch.x);
+    Serial.print(F("', "));
+    Serial.print(batch.y);
+    Serial.print(F("', "));
+    Serial.println(batch.z);
   }
 }
 #endif
