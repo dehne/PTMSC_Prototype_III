@@ -744,7 +744,7 @@ bool FlyingPlatform::run() {
                 Serial.println(vSlope[vHeading]);
             }
             // Super temporary test
-            if (source.z != target.x) {
+            if (source.z != target.z) {
                 Serial.print(F("Unexpected change in z while starting new move. source: ("));
                 Serial.print(source.x);
                 Serial.print(F(", "));
