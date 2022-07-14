@@ -105,10 +105,10 @@
 #define DIVER_HANG    (330)             // How much (mm) the diver hangs below the suspension point
 
 // Safety margins (mm) for left, right, front, back, down and up
-#define MARGIN_L      (130)             // Diver's flippers about this far from lift point
-#define MARGIN_R      (130)
-#define MARGIN_F      (130)
-#define MARGIN_B      (130)
+#define MARGIN_L      (110)             // Diver's flippers about this far from lift point
+#define MARGIN_R      (110)
+#define MARGIN_F      (110)
+#define MARGIN_B      (110)
 #define MARGIN_D      (DIVER_HANG + 15) // Diver can come within 15mm of bottom
 #define MARGIN_U      (130)             // Don't want to go above home height by much at all
 
@@ -148,7 +148,7 @@
 #define INIT_COHORTS    (3)                     // The number of abalone cohorts the has to outplant
 
 // Misc compile-time definitions
-#define BANNER          F("PTMSC Prototype v 0.77 March 2022")
+#define BANNER          F("PTMSC Prototype v 0.80 July 2022")
 
 // Global variables
 FlyingPlatform diver {

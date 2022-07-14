@@ -12,8 +12,8 @@
  *
  *****
  * 
- * FlyingPlatform V0.75, September 2021
- * Copyright (C) 2020-2021 D.L. Ehnebuske
+ * FlyingPlatform V0.80, July 2022
+ * Copyright (C) 2020-2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1193,7 +1193,7 @@ fp_Point3D FlyingPlatform::newTarget() {
         #endif
         return here;
     }
-    
+
     // Calculate what z is based on vSlope x, here.x, y, here.y and here.z.
     z = here.z + vSlope[vHeading] * sqrt((x - here.x) * (x - here.x) + (y - here.y) * (y - here.y));
 

@@ -92,8 +92,8 @@
  * 
  *****
  * 
- * FlyingPlatform V0.75, September 2021
- * Copyright (C) 2020-2021 D.L. Ehnebuske
+ * FlyingPlatform V0.80, July 2022
+ * Copyright (C) 2020-2022 D.L. Ehnebuske
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
