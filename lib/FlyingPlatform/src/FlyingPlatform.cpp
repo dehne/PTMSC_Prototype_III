@@ -728,7 +728,7 @@ bool FlyingPlatform::run() {
         // If we're to go off in a new direction, set up for first batch of the move from wherever we are to target
         if (newMove) {            
             newMove = false;
-            source = timerISRHasWork ? nextPoint : where();
+            source = timerISRHasWork ? nextPoint : where();  // From where we'll be when we stop if moving; from where we are if stopped
             #ifdef FP_DEBUG_GEO
             if (source.x < marginsMin.x || source.y < marginsMin.y || source.z < marginsMin.z ||
                 source.x > marginsMax.x || source.y > marginsMax.y || source.z > marginsMax.z) {
@@ -742,13 +742,6 @@ bool FlyingPlatform::run() {
                 Serial.print(hSlope[hHeading]);
                 Serial.print(F(", vSlope: "));
                 Serial.println(vSlope[vHeading]);
-            }
-            // Temprorary test
-            if (source.z != target.z) {
-                Serial.print(F("z source and target z differ in batch prep: source.z: "));
-                Serial.print(source.z);
-                Serial.print(F(", target.z: "));
-                Serial.println(target.z);
             }
             #endif
             float moveLength = sqrt(
@@ -1083,7 +1076,7 @@ fp_Point3D FlyingPlatform::where() {
     }
     fp_Point3D answer = cbToP3D(cs);
 
-    #ifdef FP_DEBUG_GEO_VERBOSE
+    #ifdef FP_DEBUG_GEO
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
         answer.x > marginsMax.x || answer.y > marginsMax.y || answer.z > marginsMax.z) {
         Serial.print(F("where() called while out of bounds. x: "));
