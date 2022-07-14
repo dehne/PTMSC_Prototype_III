@@ -338,11 +338,11 @@ const sb_state_t sbState[] = {
 // The definition of the outplanting sites. Each consists of a location in 3-space (mm) and an 
 // indication of whether the visitor has done an outplanting in it
 static sb_site_t sb_site[] = {
-    {{200, 420, 15}, false}, 
-    {{260, 270, 15}, false}, 
-    {{440, 360, 15}, false}, 
-    {{900, 480, 15}, false}, 
-    {{720, 460, 15}, false}};
+    {{200, 420, 20}, false}, 
+    {{260, 270, 20}, false}, 
+    {{440, 360, 20}, false}, 
+    {{900, 480, 20}, false}, 
+    {{620, 260, 20}, false}};
 #define SB_SITE_COUNT      ((int)(sizeof(sb_site) / sizeof(sb_site[0])))    // The number of sites there are
 
 class Storyboard {
