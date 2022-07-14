@@ -728,7 +728,7 @@ bool FlyingPlatform::run() {
         // If we're to go off in a new direction, set up for first batch of the move from wherever we are to target
         if (newMove) {            
             newMove = false;
-            source = where();
+            source = nextPoint;
             #ifdef FP_DEBUG_GEO
             if (source.x < marginsMin.x || source.y < marginsMin.y || source.z < marginsMin.z ||
                 source.x > marginsMax.x || source.y > marginsMax.y || source.z > marginsMax.z) {
