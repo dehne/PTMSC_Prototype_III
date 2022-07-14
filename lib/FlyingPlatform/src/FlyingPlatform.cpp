@@ -743,6 +743,13 @@ bool FlyingPlatform::run() {
                 Serial.print(F(", vSlope: "));
                 Serial.println(vSlope[vHeading]);
             }
+            // Temprorary test
+            if (source.z != target.z) {
+                Serial.print(F("z source and target z differ in batch prep: source.z: "));
+                Serial.print(source.z);
+                Serial.print(F(", target.z: "));
+                Serial.println(target.z);
+            }
             #endif
             float moveLength = sqrt(
                 (target.x - source.x) * (target.x - source.x) + 
@@ -1119,8 +1126,6 @@ fp_Point3D FlyingPlatform::newTarget() {
         here = cbToP3D(nextCableSteps); // If we're running, we'll start with next batch
         #ifdef FP_DEBUG_GEO
         isStopped = false;
-        Serial.print(F("newTarget while moving. here.z: "));
-        Serial.print(here.z);
         #endif
     } else {
         here = where();                 // If we're stopped, we'll start where we are
@@ -1226,13 +1231,6 @@ fp_Point3D FlyingPlatform::newTarget() {
     }
 
     fp_Point3D answer = {(long)(x + 0.5), (long)(y + 0.5), (long)(z + 0.5)};
-
-    #ifdef FP_DEBUG_GEO
-    if (!isStopped) {
-        Serial.print(F(", answer.z: "));
-        Serial.println(answer.z);
-    }
-    #endif
 
     // Assert: The answer should be inside of the margins
     if (answer.x < marginsMin.x || answer.y < marginsMin.y || answer.z < marginsMin.z ||
