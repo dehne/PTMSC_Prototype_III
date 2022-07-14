@@ -1193,6 +1193,9 @@ fp_Point3D FlyingPlatform::newTarget() {
         #endif
         return here;
     }
+    
+    // Calculate what z is based on vSlope x, here.x, y, here.y and here.z.
+    float z = here.z + vSlope[vHeading] * sqrt((x - here.x) * (x - here.x) + (y - here.y) * (y - here.y));
 
     // Save x, y and z at this stage so we'll have them in case assertion fails
     float x1 = x;
