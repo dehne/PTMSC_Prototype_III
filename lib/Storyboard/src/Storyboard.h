@@ -341,7 +341,7 @@ static sb_site_t sb_site[] = {
     {{200, 420, 20}, false}, 
     {{260, 270, 20}, false}, 
     {{440, 360, 20}, false}, 
-    {{900, 480, 20}, false}, 
+    {{767, 132, 20}, false}, 
     {{620, 260, 20}, false}};
 #define SB_SITE_COUNT      ((int)(sizeof(sb_site) / sizeof(sb_site[0])))    // The number of sites there are
 
