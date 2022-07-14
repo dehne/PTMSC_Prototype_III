@@ -68,7 +68,7 @@
 
 #define DEBUG                         // Uncomment to turn on debugging messages
 //#define VERBOSE                       // Uncomment for even more debugging messages
-#define NO_STORY                      // Uncomment to disable storyboard
+//#define NO_STORY                      // Uncomment to disable storyboard
 
 // For the stepper motors
 #define PIN_0D        (4)             // Motor driver 0 (x = 0, y = 0 winch) direction pin
